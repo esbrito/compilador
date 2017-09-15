@@ -1,5 +1,5 @@
 
-
+#define HASH_SIZE 1000
 typedef struct hash_node
 {
   int type;
@@ -8,7 +8,7 @@ typedef struct hash_node
 } HASH_NODE;
 
 
-void hashAddress(char *text);
-HASH_NODE* hashInsert(int type, char *text);
-void hashTablePrint(void);
-HASH_NODE* hashFind( char *text);
+int hash_address(char *text);
+HASH_NODE* hash_insert(int type, char *text);
+void hash_table_print(void);
+HASH_NODE* hash_find( char *text);
