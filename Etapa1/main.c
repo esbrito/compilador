@@ -29,5 +29,6 @@ int main(int argc, char** argv)
     }
     printf("Token detectado: %d ---- Linha: %d\n", token, getLineNumber());
   }
+  hash_table_print();
   return 1;
 }

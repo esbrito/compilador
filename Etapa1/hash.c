@@ -36,7 +36,7 @@ void hash_table_print(void)
     {
         for (node = hash_table[i]; node; node = node->next)
         {
-            printf("Tabela na posição %d possui o valor %s", i, node->text);
+            printf("Tabela na posição %d possui o valor %s\n", i, node->text);
         }
     }
 }

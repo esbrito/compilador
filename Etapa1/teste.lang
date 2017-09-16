@@ -1,10 +1,6 @@
-designadoasd
-asd
-as
-d
-asd
-
-asd
-as
-d
-a
+long teste;
+for(i = 1  ; i < 10 ; i ++)
+{
+    teste = teste + 1;
+}
+return teste;
