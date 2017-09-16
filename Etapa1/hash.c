@@ -6,6 +6,12 @@
 
 HASH_NODE *hash_table[HASH_SIZE];
 
+void initMe() {
+    int i;
+    for (i=0 ; i < HASH_SIZE ; i++) { hash_table[i] = 0; }
+}
+
+
 HASH_NODE* hash_insert(int type, char *text)
 {
     HASH_NODE *node;
@@ -17,7 +23,8 @@ HASH_NODE* hash_insert(int type, char *text)
     }
     else
     {
-        address = hash_address(text);
+        printf("Added %s\n", text);
+	address = hash_address(text);
         node = (HASH_NODE *)calloc(1, sizeof(HASH_NODE));
         node->type = type;
         node->text = calloc(strlen(text) + 1, sizeof(1));
@@ -36,21 +43,20 @@ void hash_table_print(void)
     {
         for (node = hash_table[i]; node; node = node->next)
         {
-            printf("Tabela na posição %d possui o valor %s\n", i, node->text);
+	    printf("Tabela na posição %d possui o valor %s\n", i, node->text);
         }
     }
 }
 
 HASH_NODE* hash_find(char *text)
 {
-    int i = 0;
     HASH_NODE *node;
     int address;
 
     address = hash_address(text);
-    for (node = hash_table[i]; node; node = node->next)
+    for (node = hash_table[address]; node; node = node->next)
     {
-        if (!strcmp(text, node->text))
+        if (!(strcmp(text, node->text)))
         {
             return node;
         }
@@ -66,4 +72,6 @@ int hash_address(char *text)
     {
         address = (address * text[i]) % HASH_SIZE;
     }
+    
+    return address - 1;
 }

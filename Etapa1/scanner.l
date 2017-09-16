@@ -44,11 +44,6 @@ int line_number = 1;
 
 %%
 
-void initMe()
-{
-
-}
-
 #include "main.c"
 
 int yywrap()

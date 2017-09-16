@@ -10,7 +10,7 @@
 
 etapa1: lex.yy.o hash.o
 	gcc -o etapa1 lex.yy.o hash.o
-main.o: hash.c
+hash.o: hash.c
 	gcc -c hash.c
 lex.yy.o: lex.yy.c
 	gcc -c lex.yy.c
