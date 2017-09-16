@@ -19,11 +19,11 @@ int line_number = 1;
 
 %%
 
-"byte"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_BYTE;}
-"short"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_SHORT;}						
-"long"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_LONG;}
-"float"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_FLOAT;}
-"double"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_DOUBLE;}
+"byte"	{return KW_BYTE;}
+"short"	{return KW_SHORT;}						
+"long"	{return KW_LONG;}
+"float"	{return KW_FLOAT;}
+"double"	{return KW_DOUBLE;}
 "if"						{return KW_IF;}
 "then"						{return KW_THEN;}
 "else"						{return KW_ELSE;}
@@ -31,7 +31,7 @@ int line_number = 1;
 "for"						{return KW_FOR;}
 "read"						{return KW_READ;}
 "print"						{return KW_PRINT;}
-"return"/[ ]+([a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+)	{return KW_RETURN;}
+"return"	{return KW_RETURN;}
 "\n"						{line_number++;}
 "<="						{return OPERATOR_LE;}
 ">="						{return OPERATOR_GE;}
