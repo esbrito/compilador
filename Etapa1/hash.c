@@ -23,7 +23,6 @@ HASH_NODE* hash_insert(int type, char *text)
     }
     else
     {
-        printf("Added %s\n", text);
 	address = hash_address(text);
         node = (HASH_NODE *)calloc(1, sizeof(HASH_NODE));
         node->type = type;
@@ -70,7 +69,7 @@ int hash_address(char *text)
     int address = 1;
     for (i = 0; i < strlen(text); ++i)
     {
-        address = (address * text[i]) % HASH_SIZE;
+        address = ((address * text[i]) % HASH_SIZE) + 1;
     }
     
     return address - 1;
