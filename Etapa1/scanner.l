@@ -46,7 +46,7 @@ int line_number = 1;
 [0-9]*"."[0-9]+				{hash_insert(LIT_REAL, yytext); return LIT_REAL;}
 [a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+	{hash_insert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 [-,;:()\[\]{}+*/<>=!&$#]    {return (int)yytext[0];}
-
+" "|"	"					{}
 
 "//".*
 "/*"                        {BEGIN(COMMENT);}
