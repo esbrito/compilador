@@ -66,7 +66,9 @@ int yywrap()
 	return 1;
 }
 
-
+int isRunning(){
+	return running;
+}
 
 int getLineNumber()
 {
