@@ -43,16 +43,22 @@
 	cmdl: cmd  cmdl  | /*empty*/
 	;
 
-	cmd: TK_IDENTIFIER  ':' globalVars
+	cmd:
+	TK_IDENTIFIER  ':' globalVars |
+	'(' function
 	;
 
 	//Declaração de variáveis globais
 	globalVars:
-	   KW_BYTE '=' initialValueTypes ';' | KW_BYTE '[' LIT_INTEGER ']' vectorInit ';'  |
-	   KW_SHORT '=' initialValueTypes ';' |  KW_SHORT '[' LIT_INTEGER ']' vectorInit ';'  |
-	   KW_LONG '=' initialValueTypes ';' |  KW_LONG '[' LIT_INTEGER ']' vectorInit ';'  |
-	   KW_FLOAT '=' initialValueTypes ';' |  KW_FLOAT '[' LIT_INTEGER ']' vectorInit ';'  |
-	   KW_DOUBLE '=' initialValueTypes ';' | KW_DOUBLE '[' LIT_INTEGER ']' vectorInit ';'
+	scalarType ';' | vectorType ';'
+	;
+
+	scalarType:
+	types '=' initialValueTypes
+	;
+
+	vectorType:
+	types '[' LIT_INTEGER ']' vectorInit
 	;
 
 	initialValueTypes: LIT_INTEGER | LIT_REAL| LIT_CHAR
@@ -60,6 +66,31 @@
 
 
 	vectorInit: initialValueTypes vectorInit | /*empty*/
+	;
+
+	function:
+	types ')' TK_IDENTIFIER '(' params ')' block
+	;
+
+	types:
+	KW_BYTE | KW_SHORT | KW_LONG | KW_FLOAT | KW_DOUBLE
+	;
+
+	params: param restoParam | /*empty*/
+	;
+
+	param: TK_IDENTIFIER 	':' types
+	;
+
+	restoParam: ',' param restoParam | /*empty*/
+	;
+
+	block:
+	'{' cmdblock '}'
+	;
+
+	cmdblock:
+
 	;
 
 	%%
