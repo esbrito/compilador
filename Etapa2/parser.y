@@ -45,12 +45,21 @@
 
 	cmd:
 	TK_IDENTIFIER  ':' globalVars |
-	'(' function |
+    '(' function |
     TK_IDENTIFIER atrib |
+    KW_IF '(' exp ')' KW_THEN fluxocmd else |
+    KW_WHILE '(' exp ')' fluxocmd |
     KW_PRINT printables |
     KW_READ '&' TK_IDENTIFIER | // usando '&' como simbolo temporario
-    KW_RETURN exp
+    KW_RETURN exp | // gera warning por redundancia de producao vazia
     ;
+
+    // Bloco de fluxo - pode um ser um comando unico ou um bloco
+    fluxocmd: cmd | block ;
+
+    // else
+    // tem algum bug, falha na linha 27 do exemplo.lang
+    else: KW_ELSE fluxocmd | ;
 
     // Atribuicoes
     atrib:
@@ -61,6 +70,7 @@
     exp:
     TK_IDENTIFIER |
     TK_IDENTIFIER '[' exp ']' |
+    TK_IDENTIFIER '(' params ')' |
     LIT_INTEGER |
     LIT_REAL |
     LIT_CHAR |
@@ -117,15 +127,25 @@
 	KW_BYTE | KW_SHORT | KW_LONG | KW_FLOAT | KW_DOUBLE
 	;
 
+    // lista de parametros para declaracao
 	params: param restoParam | /*empty*/
 	;
 
-	param: TK_IDENTIFIER 	':' types
+    // param pode receber tipo ou não, depende se for usado na declaracao ou chamada da
+    // funcao
+	param: 
+    TK_IDENTIFIER ':' types | 
+    TK_IDENTIFIER | 
+    LIT_INTEGER |
+    LIT_REAL |
+    LIT_CHAR |
+    LIT_STRING
 	;
 
 	restoParam: ',' param restoParam | /*empty*/
 	;
 
+    // bloco de comandos
 	block:
 	'{' cmdblock '}'
 	;
