@@ -45,8 +45,50 @@
 
 	cmd:
 	TK_IDENTIFIER  ':' globalVars |
-	'(' function
-	;
+	'(' function |
+  TK_IDENTIFIER atrib |
+  KW_PRINT printables |
+  KW_READ '&' TK_IDENTIFIER | // usando '&' como simbolo temporario
+  KW_RETURN exp
+  ;
+
+  // Atribuicoes
+  atrib:
+  '=' exp | '[' exp ']' '=' exp
+  ;
+
+  // Declaracao de expressoes
+  exp:
+  TK_IDENTIFIER |
+  TK_IDENTIFIER '[' exp ']' |
+  LIT_INTEGER |
+  LIT_REAL |
+  LIT_CHAR |
+  exp '+' exp |
+  exp '-' exp |
+  exp '*' exp |
+  exp '/' exp |
+  exp '<' exp |
+  exp '>' exp |
+  exp '!' exp |
+  exp OPERATOR_LE exp |
+  exp OPERATOR_GE exp |
+  exp OPERATOR_EQ exp |
+  exp OPERATOR_NE exp |
+  exp OPERATOR_AND exp |
+  exp OPERATOR_OR exp |
+  '(' exp ')'  
+  ;
+
+  // Lista de elementos do print
+  printables: elem restoElem | 
+  ;
+
+  elem: LIT_STRING | exp
+  ;
+
+  restoElem: ',' elem restoElem |
+  ;
 
 	//Declaração de variáveis globais
 	globalVars:
@@ -63,9 +105,8 @@
 
 	initialValueTypes: LIT_INTEGER | LIT_REAL| LIT_CHAR
 	;
-
-
-	vectorInit: initialValueTypes vectorInit | /*empty*/
+	
+  vectorInit: initialValueTypes vectorInit | /*empty*/
 	;
 
 	function:
@@ -89,9 +130,11 @@
 	'{' cmdblock '}'
 	;
 
-	cmdblock:
-
+	cmdblock: cmd restoCmd | 
 	;
+
+  restoCmd: ';' cmd restoCmd |
+  ;
 
 	%%
 
