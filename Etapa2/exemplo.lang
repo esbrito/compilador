@@ -24,7 +24,7 @@ d: byte=65;
     print "Parou no meio\n";
   if (a==11) then
     ;
-  if (a==11) then else
+  if (a==11) then {} else
     ;
   ;;;
   {;};
@@ -32,6 +32,6 @@ d: byte=65;
   }
 
 (long) incn (x: long, n: long)
-  {return x+n}
+  {return (x+n)}
 
 (short) voidfunc() {}

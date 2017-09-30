@@ -42,24 +42,22 @@
 
 	cmdl: cmd  cmdl  | /*empty*/
 	;
-
+  
 	cmd:
-	TK_IDENTIFIER  ':' globalVars |
+    TK_IDENTIFIER  ':' globalVars |
     '(' function |
     TK_IDENTIFIER atrib |
-    KW_IF '(' exp ')' KW_THEN fluxocmd else |
-    KW_WHILE '(' exp ')' fluxocmd |
+    KW_IF '(' exp ')' KW_THEN cmd else |
+    KW_WHILE '(' exp ')' cmd |
     KW_PRINT printables |
     KW_READ '&' TK_IDENTIFIER | // usando '&' como simbolo temporario
-    KW_RETURN exp | // gera warning por redundancia de producao vazia
+    KW_RETURN exp | // falha na linha 35 do exemplo original por causa do return x
+    block |
     ;
 
-    // Bloco de fluxo - pode um ser um comando unico ou um bloco
-    fluxocmd: cmd | block ;
-
     // else
-    // tem algum bug, falha na linha 27 do exemplo.lang
-    else: KW_ELSE fluxocmd | ;
+    // falha na linha 27 do exemplo.lang original por causa do 'then else'
+    else: KW_ELSE cmd | ;
 
     // Atribuicoes
     atrib:
@@ -132,7 +130,7 @@
 	;
 
     // param pode receber tipo ou não, depende se for usado na declaracao ou chamada da
-    // funcao
+    // funcao. na chamada tbm recebe literais
 	param: 
     TK_IDENTIFIER ':' types | 
     TK_IDENTIFIER | 
@@ -150,7 +148,7 @@
 	'{' cmdblock '}'
 	;
 
-	cmdblock: cmd restoCmd | 
+	cmdblock: cmd restoCmd |
 	;
 
     restoCmd: ';' cmd restoCmd |
