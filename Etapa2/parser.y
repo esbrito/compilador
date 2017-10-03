@@ -50,7 +50,7 @@
     KW_IF '(' exp ')' KW_THEN cmd else |
     KW_WHILE '(' exp ')' cmd |
     KW_PRINT printables |
-    KW_READ '&' TK_IDENTIFIER | // usando '&' como simbolo temporario
+    KW_READ '>' TK_IDENTIFIER | // usando '&' como simbolo temporario
     KW_RETURN exp | // falha na linha 35 do exemplo original por causa do return x
     block |
     ;
