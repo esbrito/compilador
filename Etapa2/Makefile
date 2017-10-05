@@ -8,7 +8,7 @@
 # Use make clean to remove old files before remaking everything
 #
 
-etapa2: y.tab.o lex.yy.o hash.o 
+etapa2: y.tab.o lex.yy.o hash.o
 	gcc -o etapa2 lex.yy.o hash.o y.tab.o
 
 hash.o: hash.c
@@ -24,7 +24,7 @@ lex.yy.c: scanner.l
 	lex scanner.l
 
 y.tab.c: parser.y
-	yacc -d parser.y
+	yacc -d parser.y -v
 
 clean:
-	rm *.o lex.yy.c y.tab.* etapa2
+	rm *.o lex.yy.c y.* etapa2

@@ -27,6 +27,6 @@ int main(int argc, char** argv)
   }
   hash_table_print();
   //Se chegou aqui é porque a sintasse está correta
-  printf("Sintaxe correta!");
+  printf("Sintaxe correta!\n");
   return 1;
 }
