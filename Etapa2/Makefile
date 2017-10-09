@@ -24,7 +24,7 @@ lex.yy.c: scanner.l
 	lex scanner.l
 
 y.tab.c: parser.y
-	yacc -d parser.y -v
+	yacc -d parser.y
 
 clean:
 	rm *.o lex.yy.c y.* etapa2
