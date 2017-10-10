@@ -4,7 +4,7 @@ int main(int argc, char** argv)
   if(argc < 2)
   {
     fprintf(stderr, "Erro, falta 1 argumento! Indique o nome do arquivo a ser lido");
-    exit(0);
+    exit(1);
   }
 
   FILE* file = fopen(argv[1],"r");
@@ -28,5 +28,5 @@ int main(int argc, char** argv)
   hash_table_print();
   //Se chegou aqui é porque a sintasse está correta
   printf("Sintaxe correta!\n");
-  return 1;
+  exit(0);
 }
