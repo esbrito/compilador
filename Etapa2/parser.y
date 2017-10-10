@@ -140,11 +140,7 @@
 	// funcao. na chamada tbm recebe literais
 	param:
 	TK_IDENTIFIER ':' types |
-	TK_IDENTIFIER |
-	LIT_INTEGER |
-	LIT_REAL |
-	LIT_CHAR |
-	LIT_STRING
+	exp
 	;
 
 	restoParam: ',' param restoParam | /*empty*/
