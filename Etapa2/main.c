@@ -4,14 +4,14 @@ int main(int argc, char** argv)
   if(argc < 2)
   {
     fprintf(stderr, "Erro, falta 1 argumento! Indique o nome do arquivo a ser lido");
-    exit(1);
+    exit(99);
   }
 
   FILE* file = fopen(argv[1],"r");
 	if(file == NULL)
 	{
     fprintf(stderr, "Erro, ao ler arquivo!");
-    exit(1);
+    exit(99);
 	}
 	else
 	{
