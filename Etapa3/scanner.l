@@ -21,7 +21,7 @@ int yyparse();
 %%
 
 "byte"						{return KW_BYTE;}
-"short"						{return KW_SHORT;}						
+"short"						{return KW_SHORT;}
 "long"						{return KW_LONG;}
 "float"						{return KW_FLOAT;}
 "double"					{return KW_DOUBLE;}
@@ -40,11 +40,11 @@ int yyparse();
 "!="						{return OPERATOR_NE;}
 "&&"						{return OPERATOR_AND;}
 "||"						{return OPERATOR_OR;}
-\'[^']\'					{hash_insert(LIT_CHAR, yytext); return LIT_CHAR;}
-\"[^"]*\"					{hash_insert(LIT_STRING, yytext); return LIT_STRING;}
-[0-9]*						{hash_insert(LIT_INTEGER, yytext); return LIT_INTEGER;}
-[0-9]*"."[0-9]+				{hash_insert(LIT_REAL, yytext); return LIT_REAL;}
-[a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+	{hash_insert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
+\'[^']\'					{yylval.symbol = hash_insert(LIT_CHAR, yytext); return LIT_CHAR;}
+\"[^"]*\"					{yylval.symbol = hash_insert(LIT_STRING, yytext); return LIT_STRING;}
+[0-9]*						{yylval.symbol = hash_insert(LIT_INTEGER, yytext); return LIT_INTEGER;}
+[0-9]*"."[0-9]+				{yylval.symbol = hash_insert(LIT_REAL, yytext); return LIT_REAL;}
+[a-zA-Z_]|[a-zA-Z_][a-zA-Z0-9_ ]*[a-zA-Z0-9_]+	{yylval.symbol = hash_insert(TK_IDENTIFIER, yytext); return TK_IDENTIFIER;}
 [-,;:()\[\]{}+*/<>=!&$#]    {return (int)yytext[0];}
 " "|"	"					{}
 

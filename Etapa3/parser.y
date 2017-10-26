@@ -32,20 +32,14 @@
 	%token OPERATOR_NE
 	%token OPERATOR_AND
 	%token OPERATOR_OR
-	%token TK_IDENTIFIER
-	%token LIT_INTEGER
-	%token LIT_REAL
-	%token LIT_CHAR
-	%token LIT_STRING
+	%token<symbol> TK_IDENTIFIER
+	%token<symbol> LIT_INTEGER
+	%token<symbol> LIT_REAL
+	%token<symbol> LIT_CHAR
+	%token<symbol> LIT_STRING
 	%token TOKEN_ERROR
 
 	%type<tree> exp
-	%type<symbol> TK_IDENTIFIER
-	%type<symbol> LIT_INTEGER
-	%type<symbol> LIT_REAL
-	%type<symbol> LIT_CHAR
-
-
 
 
 	%left '<' '>'  '!' OPERATOR_LE  OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
@@ -67,7 +61,7 @@
 	cmd:
 	TK_IDENTIFIER atrib |
 	KW_IF '(' exp ')' KW_THEN cmd else |
-	KW_WHILE '(' exp ')' cmd {tree_print($3);}|
+	KW_WHILE '(' exp ')' cmd {tree_print($3, 0);}|
 	KW_PRINT printables |
 	KW_READ '>' TK_IDENTIFIER |
 	KW_RETURN exp | // falha na linha 35 do exemplo original por causa do return x
@@ -91,19 +85,19 @@
 	LIT_INTEGER {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	LIT_REAL {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	LIT_CHAR {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
-	exp '+' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '-' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '*' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '/' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '<' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '>' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp '!' exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp OPERATOR_LE exp {$$ = tree_create(TREE_SYMBOL,0, $1, $3 ,0 ,0 );}|
-	exp OPERATOR_GE exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp OPERATOR_EQ exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
-	exp OPERATOR_NE exp {$$ = tree_create(TREE_SYMBOL,0, $1, $3 ,0 ,0);}|
-	exp OPERATOR_AND exp {$$ = tree_create(TREE_SYMBOL,0,$1, $3 ,0 ,0);}|
-	exp OPERATOR_OR exp {$$ = tree_create(TREE_SYMBOL, 0,$1, $3 ,0 ,0);}|
+	exp '+' exp {$$ = tree_create(TREE_ADD, 0,$1, $3 ,0 ,0);}|
+	exp '-' exp {$$ = tree_create(TREE_SUB, 0,$1, $3 ,0 ,0);}|
+	exp '*' exp {$$ = tree_create(TREE_MUL, 0,$1, $3 ,0 ,0);}|
+	exp '/' exp {$$ = tree_create(TREE_DIV, 0,$1, $3 ,0 ,0);}|
+	exp '<' exp {$$ = tree_create(TREE_LESS, 0,$1, $3 ,0 ,0);}|
+	exp '>' exp {$$ = tree_create(TREE_GREATER, 0,$1, $3 ,0 ,0);}|
+	exp '!' exp {$$ = tree_create(TREE_NOT, 0,$1, $3 ,0 ,0);}|
+	exp OPERATOR_LE exp {$$ = tree_create(TREE_LE,0, $1, $3 ,0 ,0 );}|
+	exp OPERATOR_GE exp {$$ = tree_create(TREE_GE, 0,$1, $3 ,0 ,0);}|
+	exp OPERATOR_EQ exp {$$ = tree_create(TREE_EQ, 0,$1, $3 ,0 ,0);}|
+	exp OPERATOR_NE exp {$$ = tree_create(TREE_NE,0, $1, $3 ,0 ,0);}|
+	exp OPERATOR_AND exp {$$ = tree_create(TREE_AND,0,$1, $3 ,0 ,0);}|
+	exp OPERATOR_OR exp {$$ = tree_create(TREE_OR, 0,$1, $3 ,0 ,0);}|
 	'(' exp ')' {$$ = $2;}
 	;
 
