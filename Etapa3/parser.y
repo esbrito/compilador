@@ -40,6 +40,21 @@
 	%token TOKEN_ERROR
 
 	%type<tree> exp
+	%type<tree> cmd
+	%type<tree> else
+	%type<tree> elem
+	%type<tree> restoElem
+	%type<tree> printables
+	%type<tree> initialValueTypes
+	%type<tree> types
+	%type<tree> params
+	%type<tree> vectorInit
+	%type<tree> block
+	%type<tree> cmdblock
+	%type<tree> restoCmd
+	%type<tree> param
+	%type<tree> declarations
+	%type<tree> restoParam
 
 
 	%left '<' '>'  '!' OPERATOR_LE  OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
@@ -50,38 +65,39 @@
 	program: declarationsList
 	;
 
-	declarationsList: declarations declarationsList |
+	declarationsList: declarations declarationsList {tree_print($1, 0);}|
 	;
 
 	declarations:
-	TK_IDENTIFIER  ':' globalVars |
-	'(' function
+	TK_IDENTIFIER  ':' types '=' initialValueTypes ';'  {$$ = tree_create(TREE_DECLARATION_SCALAR, $1,$3, $5 ,0 ,0);} |
+	TK_IDENTIFIER  ':' types '[' LIT_INTEGER ']' vectorInit   ';' {$$ = tree_create(TREE_DECLARATION_VECTOR, $1,$3, $7 ,0 ,0);}|
+	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);}
 	;
 
+
 	cmd:
-	TK_IDENTIFIER atrib |
-	KW_IF '(' exp ')' KW_THEN cmd else |
-	KW_WHILE '(' exp ')' cmd {tree_print($3, 0);}|
-	KW_PRINT printables |
-	KW_READ '>' TK_IDENTIFIER |
-	KW_RETURN exp | // falha na linha 35 do exemplo original por causa do return x
-	block |
+	TK_IDENTIFIER '=' exp {$$ = tree_create(TREE_ASSIGN, $1, $3 ,0 ,0 ,0);}|
+	TK_IDENTIFIER '[' exp ']' '=' exp {$$ = tree_create(TREE_ASSIGN_VECTOR, $1, $3 ,$6 ,0 ,0);}|
+	KW_IF '(' exp ')' KW_THEN cmd else {$$ = tree_create(TREE_IF, 0, $3 ,$6 ,$7 ,0);}|
+	KW_WHILE '(' exp ')' cmd {$$ = tree_create(TREE_WHILE, 0, $3 ,$5 ,0 ,0);}|
+	KW_PRINT printables {$$ = $2;}|
+	KW_READ '>' TK_IDENTIFIER {$$ = tree_create(TREE_READ, $3, 0 ,0 ,0 ,0);}|
+	KW_RETURN exp {$$ = tree_create(TREE_RETURN, 0, $2 ,0 ,0 ,0);}| 
+	block {$$ = $1;}|
+	{$$ = 0;}
 	;
 
 	// else
-	// falha na linha 27 do exemplo.lang original por causa do 'then else'
-	else: KW_ELSE cmd | ;
-
-	// Atribuicoes
-	atrib:
-	'=' exp | '[' exp ']' '=' exp
+	else: KW_ELSE cmd {$$ = tree_create(TREE_ELSE, 0, $2 ,0 ,0 ,0);}| 
+	{$$ = 0;}
 	;
+
 
 	// Declaracao de expressoes
 	exp:
 	TK_IDENTIFIER {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	TK_IDENTIFIER '[' exp ']' {$$ = tree_create(TREE_SYMBOL, $1, $3 ,0 ,0 ,0);}|
-	TK_IDENTIFIER '(' params ')' {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
+	TK_IDENTIFIER '(' params ')' {$$ = tree_create(TREE_FUNCTION_CALL, $1, $3 ,0, 0,0);}|
 	LIT_INTEGER {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	LIT_REAL {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	LIT_CHAR {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
@@ -102,65 +118,60 @@
 	;
 
 	// Lista de elementos do print
-	printables: elem restoElem
+	printables: elem restoElem {$$ = tree_create(TREE_PRINT, 0, $1 ,$2 ,0 ,0);}
 	;
 
-	elem: LIT_STRING | exp
+	elem: LIT_STRING {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
+	exp {$$ = $1;}
 	;
 
-	restoElem: ',' elem restoElem |
+	restoElem: ',' elem restoElem {$$ = tree_create(TREE_PRINT, 0, $2 ,$3 ,0 ,0);}| 
+	{$$ = 0;}
 	;
 
-	//Declaração de variáveis globais
-	globalVars:
-	scalarType ';' | vectorType ';'
+	initialValueTypes: LIT_INTEGER {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
+	LIT_REAL {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
+	LIT_CHAR {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}
 	;
 
-	scalarType:
-	types '=' initialValueTypes
+	vectorInit: initialValueTypes vectorInit {$$ = tree_create(TREE_VECTOR_VALUES, 0, $1 ,$2 ,0 ,0);}|
+	{$$ = 0;} /*empty*/
 	;
 
-	vectorType:
-	types '[' LIT_INTEGER ']' vectorInit
-	;
-
-	initialValueTypes: LIT_INTEGER | LIT_REAL| LIT_CHAR
-	;
-
-	vectorInit: initialValueTypes vectorInit | /*empty*/
-	;
-
-	function:
-	types ')' TK_IDENTIFIER '(' params ')' block
-	;
-
+	
 	types:
-	KW_BYTE | KW_SHORT | KW_LONG | KW_FLOAT | KW_DOUBLE
+	KW_BYTE {$$ = tree_create(TREE_KW_BYTE, 0,0,0 ,0 ,0);}| 
+	KW_SHORT {$$ = tree_create(TREE_KW_SHORT, 0,0,0 ,0 ,0);}| 
+	KW_LONG {$$ = tree_create(TREE_KW_LONG, 0,0,0 ,0 ,0);}|
+	KW_FLOAT {$$ = tree_create(TREE_KW_FLOAT, 0,0,0 ,0 ,0);}|
+	KW_DOUBLE {$$ = tree_create(TREE_KW_DOUBLE, 0,0,0 ,0 ,0);}
 	;
 
 	// lista de parametros para declaracao
-	params: param restoParam | /*empty*/
+	params: param restoParam {$$ = tree_create(TREE_PARAMS, 0,$1, $2 ,0 ,0);}| {$$ = 0;}/*empty*/
 	;
 
 	// param pode receber tipo ou não, depende se for usado na declaracao ou chamada da
 	// funcao. na chamada tbm recebe literais
 	param:
-	TK_IDENTIFIER ':' types |
-	exp
+	TK_IDENTIFIER ':' types {$$ = tree_create(TREE_PARAM, $1,$3,0 ,0 ,0);}|
+	exp {$$ = $1;}
 	;
 
-	restoParam: ',' param restoParam | /*empty*/
+	restoParam: ',' param restoParam {$$ = $2;}| 
+	{$$ = 0;}/*empty*/
 	;
 
 	// bloco de comandos
 	block:
-	'{' cmdblock '}'
+	'{' cmdblock '}' {$$ = $2; }
 	;
 
-	cmdblock: cmd restoCmd
+	cmdblock: cmd restoCmd {$$ = tree_create(TREE_CMD_BLOCK, 0,$1, $2 ,0 ,0);}
 	;
 
-	restoCmd: ';' cmd restoCmd |
+	restoCmd: ';' cmd restoCmd {$$ = tree_create(TREE_CMD_LIST, 0,$2, $3 ,0 ,0);}| 
+	{$$ = 0;}
 	;
 
 	%%
