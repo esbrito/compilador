@@ -132,6 +132,10 @@ void tree_print(TREE *node, int level)
     case TREE_CMD_BLOCK:
       fprintf(stderr, "CMD_BLOCK");
       break;
+    case PROGRAM:
+      break;
+    case DECLARATIONS:
+      break;
     default:
       fprintf(stderr, "UNKOWN");
       break;
@@ -148,7 +152,165 @@ void tree_print(TREE *node, int level)
 
     for (i = 0; i < MAX_SONS; ++i)
     {
-      tree_print(node->son[i], level + 1);
+      if (node->type == PROGRAM || node->type == DECLARATIONS)
+      {
+        tree_print(node->son[i], level);
+      }
+      else
+      {
+        tree_print(node->son[i], level + 1);
+      }
+    }
+  }
+}
+
+char *decompile(FILE *file, TREE *node, int level)
+{
+  int i = 0;
+  if (node)
+  {
+    for (i = 0; i < level; ++i)
+    {
+      fprintf(file, "---");
+    }
+    switch (node->type)
+    {
+    case TREE_SYMBOL:
+      fprintf(file, "SYMBOL");
+      break;
+    case TREE_ADD:
+      fprintf(file, "SOMA");
+      break;
+    case TREE_SUB:
+      fprintf(file, "SUB");
+      break;
+    case TREE_MUL:
+      fprintf(file, "MULTI");
+      break;
+    case TREE_DIV:
+      fprintf(file, "DIV");
+      break;
+    case TREE_LESS:
+      fprintf(file, "LESS");
+      break;
+    case TREE_GREATER:
+      fprintf(file, "GREATER");
+      break;
+    case TREE_NOT:
+      fprintf(file, "NOT");
+      break;
+    case TREE_LE:
+      fprintf(file, "LE");
+      break;
+    case TREE_GE:
+      fprintf(file, "GE");
+      break;
+    case TREE_EQ:
+      fprintf(file, "EQ");
+      break;
+    case TREE_NE:
+      fprintf(file, "NE");
+      break;
+    case TREE_AND:
+      fprintf(file, "AND");
+      break;
+    case TREE_OR:
+      fprintf(file, "OR");
+      break;
+    case TREE_ASSIGN:
+      fprintf(file, "ASSIGN");
+      break;
+    case TREE_IF:
+      fprintf(file, "IF THEN");
+      break;
+    case TREE_WHILE:
+      fprintf(file, "WHILE");
+      break;
+    case TREE_PRINT:
+      fprintf(file, "PRINT");
+      break;
+    case TREE_READ:
+      fprintf(file, "READ");
+      break;
+    case TREE_RETURN:
+      fprintf(file, "RETURN");
+      break;
+    case TREE_ELSE:
+      fprintf(file, "ELSE");
+      break;
+    case TREE_DECLARATION_SCALAR:
+      fprintf(file, "DECLARATION_SCALAR");
+      break;
+    case TREE_DECLARATION_VECTOR:
+      fprintf(file, "DECLARATION_VECTOR");
+      break;
+    case TREE_FUNCTION:
+      fprintf(file, "FUNCTION");
+      break;
+    case TREE_KW_BYTE:
+      fprintf(file, "KW_BYTE");
+      break;
+    case TREE_KW_SHORT:
+      fprintf(file, "KW_SHORT");
+      break;
+    case TREE_KW_LONG:
+      fprintf(file, "KW_LONG");
+      break;
+    case TREE_KW_FLOAT:
+      fprintf(file, "KW_FLOAT");
+      break;
+    case TREE_KW_DOUBLE:
+      fprintf(file, "KW_DOUBLE");
+      break;
+    case TREE_PARAMS:
+      fprintf(file, "PARAMS");
+      break;
+    case TREE_CMD_LIST:
+      fprintf(file, "CMD_LIST");
+      break;
+    case TREE_ASSIGN_VECTOR:
+      fprintf(file, "ASSIGN_VECTOR");
+      break;
+    case TREE_FUNCTION_CALL:
+      fprintf(file, "FUNCTION_CALL");
+      break;
+    case TREE_PARAM:
+      fprintf(file, "PARAM");
+      break;
+    case TREE_VECTOR_VALUES:
+      fprintf(file, "VECTOR_VALUES");
+      break;
+    case TREE_CMD_BLOCK:
+      fprintf(file, "CMD_BLOCK");
+      break;
+    case PROGRAM:
+      break;
+    case DECLARATIONS:
+      break;
+    default:
+      fprintf(file, "UNKOWN");
+      break;
+    }
+
+    if (node->symbol)
+    {
+      fprintf(file, ",%s\n", node->symbol->text);
+    }
+    else
+    {
+      fprintf(file, "\n");
+    }
+
+    for (i = 0; i < MAX_SONS; ++i)
+    {
+      if (node->type == PROGRAM || node->type == DECLARATIONS)
+      {
+        decompile(file, node->son[i], level);
+      }
+      else
+      {
+        decompile(file, node->son[i], level + 1);
+      }
     }
   }
 }

@@ -7,6 +7,7 @@
 #include "y.tab.h"
 
 int getLineNumber(void);
+int isRunning(void);
 
 int running = 1;
 int token;

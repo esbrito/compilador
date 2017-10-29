@@ -39,6 +39,10 @@
 #define TREE_PARAM 34
 #define TREE_VECTOR_VALUES 35
 #define TREE_CMD_BLOCK 36
+#define PROGRAM 37
+#define DECLARATIONS 38
+
+
 
 
 
@@ -56,3 +60,4 @@ typedef struct tree_node
 
 TREE *tree_create(int type, HASH_NODE *symbol, TREE *s0, TREE *s1, TREE *s2, TREE *s3);
 void tree_print(TREE *node, int level);
+char* decompile(FILE* file, TREE *node, int level);

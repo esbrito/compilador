@@ -6,6 +6,9 @@
 	int yylex();
 	int yyerror(char *message);
 	int getLineNumber();
+
+	TREE* ast_tree;
+
 	%}
 
 	%union {
@@ -55,6 +58,10 @@
 	%type<tree> param
 	%type<tree> declarations
 	%type<tree> restoParam
+	%type<tree> declarationsList
+
+
+
 
 
 	%left '<' '>'  '!' OPERATOR_LE  OPERATOR_GE OPERATOR_EQ OPERATOR_NE OPERATOR_AND OPERATOR_OR
@@ -62,10 +69,11 @@
 	%left '*' '/'
 
 	%%
-	program: declarationsList
+	program: declarationsList {ast_tree = tree_create(PROGRAM, 0, $1 ,0 ,0,0);}
 	;
 
-	declarationsList: declarations declarationsList {tree_print($1, 0);}|
+	declarationsList: declarations declarationsList {$$ = tree_create(DECLARATIONS, 0, $1 ,$2 ,0, 0); tree_print($1, 0);}|
+	 {$$ = 0;}
 	;
 
 	declarations:
