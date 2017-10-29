@@ -41,11 +41,9 @@
 #define TREE_CMD_BLOCK 36
 #define PROGRAM 37
 #define DECLARATIONS 38
-
-
-
-
-
+#define TREE_DECLARATION_SYMBOL 39
+#define TREE_DECLARATION_VECTOR_NUMBER 40
+#define TREE_DECLARATION_SYMBOL_VECTOR 41
 
 
 
@@ -60,4 +58,4 @@ typedef struct tree_node
 
 TREE *tree_create(int type, HASH_NODE *symbol, TREE *s0, TREE *s1, TREE *s2, TREE *s3);
 void tree_print(TREE *node, int level);
-char* decompile(FILE* file, TREE *node, int level);
+void decompile(FILE* file, TREE *node);

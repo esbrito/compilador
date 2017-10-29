@@ -59,6 +59,7 @@
 	%type<tree> declarations
 	%type<tree> restoParam
 	%type<tree> declarationsList
+	%type<tree> initialValueTypesVector
 
 
 
@@ -78,7 +79,7 @@
 
 	declarations:
 	TK_IDENTIFIER  ':' types '=' initialValueTypes ';'  {$$ = tree_create(TREE_DECLARATION_SCALAR, $1,$3, $5 ,0 ,0);} |
-	TK_IDENTIFIER  ':' types '[' LIT_INTEGER ']' vectorInit   ';' {$$ = tree_create(TREE_DECLARATION_VECTOR, $1,$3, $7 ,0 ,0);}|
+	TK_IDENTIFIER  ':' types '[' LIT_INTEGER ']' vectorInit   ';' {$$ = tree_create(TREE_DECLARATION_VECTOR,$1,$3, tree_create(TREE_DECLARATION_VECTOR_NUMBER,$5,0,0,0,0),$7, 0);}|
 	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);}
 	;
 
@@ -137,12 +138,18 @@
 	{$$ = 0;}
 	;
 
-	initialValueTypes: LIT_INTEGER {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
-	LIT_REAL {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
-	LIT_CHAR {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}
+	initialValueTypes: LIT_INTEGER {$$ = tree_create(TREE_DECLARATION_SYMBOL, $1,0,0 ,0 ,0);}| 
+	LIT_REAL {$$ = tree_create(TREE_DECLARATION_SYMBOL, $1,0,0 ,0 ,0);}| 
+	LIT_CHAR {$$ = tree_create(TREE_DECLARATION_SYMBOL, $1,0,0 ,0 ,0);}
 	;
 
-	vectorInit: initialValueTypes vectorInit {$$ = tree_create(TREE_VECTOR_VALUES, 0, $1 ,$2 ,0 ,0);}|
+	initialValueTypesVector: LIT_INTEGER {$$ = tree_create(TREE_DECLARATION_SYMBOL_VECTOR, $1,0,0 ,0 ,0);}| 
+	LIT_REAL {$$ = tree_create(TREE_DECLARATION_SYMBOL_VECTOR, $1,0,0 ,0 ,0);}| 
+	LIT_CHAR {$$ = tree_create(TREE_DECLARATION_SYMBOL_VECTOR, $1,0,0 ,0 ,0);}
+	;
+
+
+	vectorInit: initialValueTypesVector vectorInit {$$ = tree_create(TREE_VECTOR_VALUES, 0, $1 ,$2 ,0 ,0);}|
 	{$$ = 0;} /*empty*/
 	;
 
@@ -166,7 +173,7 @@
 	exp {$$ = $1;}
 	;
 
-	restoParam: ',' param restoParam {$$ = $2;}| 
+	restoParam: ',' param restoParam {$$ = tree_create(TREE_PARAMS, 0,$2, $3 ,0 ,0);}| 
 	{$$ = 0;}/*empty*/
 	;
 

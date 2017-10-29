@@ -93,6 +93,9 @@ void tree_print(TREE *node, int level)
     case TREE_DECLARATION_VECTOR:
       fprintf(stderr, "DECLARATION_VECTOR");
       break;
+    case TREE_DECLARATION_VECTOR_NUMBER:
+      fprintf(stderr, "DECLARATION_VECTOR_NUMBER");
+      break;
     case TREE_FUNCTION:
       fprintf(stderr, "FUNCTION");
       break;
@@ -129,8 +132,14 @@ void tree_print(TREE *node, int level)
     case TREE_VECTOR_VALUES:
       fprintf(stderr, "VECTOR_VALUES");
       break;
+    case TREE_DECLARATION_SYMBOL_VECTOR:
+      fprintf(stderr, "DECLARATION_SYMBOL_VECTOR");
+      break;
     case TREE_CMD_BLOCK:
       fprintf(stderr, "CMD_BLOCK");
+      break;
+    case TREE_DECLARATION_SYMBOL:
+      fprintf(stderr, "DECLARATION_SYMBOL");
       break;
     case PROGRAM:
       break;
@@ -164,20 +173,17 @@ void tree_print(TREE *node, int level)
   }
 }
 
-char *decompile(FILE *file, TREE *node, int level)
+char *getType(char *type)
 {
+}
+void decompile(FILE *file, TREE *node)
+{
+  char *buffer;
   int i = 0;
   if (node)
   {
-    for (i = 0; i < level; ++i)
-    {
-      fprintf(file, "---");
-    }
     switch (node->type)
     {
-    case TREE_SYMBOL:
-      fprintf(file, "SYMBOL");
-      break;
     case TREE_ADD:
       fprintf(file, "SOMA");
       break;
@@ -238,32 +244,96 @@ char *decompile(FILE *file, TREE *node, int level)
     case TREE_ELSE:
       fprintf(file, "ELSE");
       break;
+    case TREE_DECLARATION_SYMBOL:
+      fprintf(file, "=%s", node->symbol->text);
+      break;
+    case TREE_DECLARATION_SYMBOL_VECTOR:
+      fprintf(file, "%s", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      break;
     case TREE_DECLARATION_SCALAR:
-      fprintf(file, "DECLARATION_SCALAR");
+      fprintf(file, "%s: ", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, ";");
       break;
     case TREE_DECLARATION_VECTOR:
-      fprintf(file, "DECLARATION_VECTOR");
+      fprintf(file, "%s: ", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, ";");
+      break;
+    case TREE_DECLARATION_VECTOR_NUMBER:
+      fprintf(file, "[%s]", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      break;
+    case TREE_VECTOR_VALUES:
+      fprintf(file, " ");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case TREE_FUNCTION:
-      fprintf(file, "FUNCTION");
+      switch (node->son[0]->type)
+      {
+      case TREE_KW_BYTE:
+        fprintf(file, "(byte)");
+        break;
+      case TREE_KW_SHORT:
+        fprintf(file, "(short)");
+        break;
+      case TREE_KW_LONG:
+        fprintf(file, "(long)");
+        break;
+      case TREE_KW_FLOAT:
+        fprintf(file, "(float)");
+        break;
+      case TREE_KW_DOUBLE:
+        fprintf(file, "(double)");
+        break;
+      }
+      fprintf(file, " %s (", node->symbol->text);
+
+      if (node->son[1] == 0)
+      {
+        fprintf(file, ")");
+      }
+      decompile(file, node->son[1]);
+      fprintf(file, "{");
+      decompile(file, node->son[2]);
+      fprintf(file, "}");
       break;
     case TREE_KW_BYTE:
-      fprintf(file, "KW_BYTE");
+      fprintf(file, "byte");
       break;
     case TREE_KW_SHORT:
-      fprintf(file, "KW_SHORT");
+      fprintf(file, "short");
       break;
     case TREE_KW_LONG:
-      fprintf(file, "KW_LONG");
+      fprintf(file, "long");
       break;
     case TREE_KW_FLOAT:
-      fprintf(file, "KW_FLOAT");
+      fprintf(file, "float");
       break;
     case TREE_KW_DOUBLE:
-      fprintf(file, "KW_DOUBLE");
+      fprintf(file, "double");
       break;
     case TREE_PARAMS:
-      fprintf(file, "PARAMS");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case TREE_CMD_LIST:
       fprintf(file, "CMD_LIST");
@@ -275,17 +345,34 @@ char *decompile(FILE *file, TREE *node, int level)
       fprintf(file, "FUNCTION_CALL");
       break;
     case TREE_PARAM:
-      fprintf(file, "PARAM");
-      break;
-    case TREE_VECTOR_VALUES:
-      fprintf(file, "VECTOR_VALUES");
+      fprintf(file, "%s:", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      if(!node->son[0] == 0)
+      {
+        fprintf(file, ",");
+      }
       break;
     case TREE_CMD_BLOCK:
-      fprintf(file, "CMD_BLOCK");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case PROGRAM:
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case DECLARATIONS:
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+        fprintf(file, "\n");
+      }
       break;
     default:
       fprintf(file, "UNKOWN");
@@ -294,23 +381,11 @@ char *decompile(FILE *file, TREE *node, int level)
 
     if (node->symbol)
     {
-      fprintf(file, ",%s\n", node->symbol->text);
+      //   fprintf(file, ",%s\n", node->symbol->text);
     }
     else
     {
-      fprintf(file, "\n");
-    }
-
-    for (i = 0; i < MAX_SONS; ++i)
-    {
-      if (node->type == PROGRAM || node->type == DECLARATIONS)
-      {
-        decompile(file, node->son[i], level);
-      }
-      else
-      {
-        decompile(file, node->son[i], level + 1);
-      }
+      // fprintf(file, "\n");
     }
   }
 }

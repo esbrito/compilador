@@ -33,7 +33,7 @@ d: byte = 65;
   {};
   }
 
-(long) incn (x: long, n: long)
+(long) incn (x: long, n: long, a: byte)
   {return (x+n)}
 
 (short) voidfunc() {}

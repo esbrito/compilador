@@ -43,7 +43,7 @@ int main(int argc, char** argv)
     printf("Token detectado: %d ---- Linha: %d\n", token, getLineNumber());
   }
 
-  char* decompiled_tree = decompile(open_file(argv[2]), ast_tree, 0);
+  decompile(open_file(argv[2]), ast_tree);
   hash_table_print();
   //Se chegou aqui é porque a sintasse está correta
   printf("Sintaxe correta!\n");
