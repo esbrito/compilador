@@ -266,10 +266,19 @@ void decompile(FILE *file, TREE *node)
       }
       break;
     case TREE_IF:
-      fprintf(file, "IF THEN");
+      fprintf(file, "if (");
+      decompile(file, node->son[0]);
+      fprintf(file, ") then {\n");
+      decompile(file, node->son[1]);
+      fprintf(file, "\n}");
+      decompile(file, node->son[2]);
       break;
     case TREE_WHILE:
-      fprintf(file, "WHILE");
+      fprintf(file, "while (");
+      decompile(file, node->son[0]);
+      fprintf(file, ") {\n");
+      decompile(file, node->son[1]);
+      fprintf(file, "\n}");
       break;
     case TREE_PRINT:
       fprintf(file, "print ");
@@ -279,13 +288,23 @@ void decompile(FILE *file, TREE *node)
       }
       break;
     case TREE_READ:
-      fprintf(file, "READ");
+      fprintf(file, "read > %s", node->symbol->text);
       break;
     case TREE_RETURN:
-      fprintf(file, "RETURN");
+      fprintf(file, "return (");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, ")");      
       break;
     case TREE_ELSE:
-      fprintf(file, "ELSE");
+      fprintf(file, "else {\n");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, "\n}");
       break;
     case TREE_DECLARATION_SYMBOL:
       fprintf(file, "=%s", node->symbol->text);
@@ -422,7 +441,11 @@ void decompile(FILE *file, TREE *node)
       decompile(file, node->son[1]);
       break;
     case TREE_FUNCTION_CALL:
-      fprintf(file, "FUNCTION_CALL");
+      fprintf(file, "%s(", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case TREE_PARAM:
       fprintf(file, "%s:", node->symbol->text);
