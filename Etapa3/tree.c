@@ -156,6 +156,9 @@ void tree_print(TREE *node, int level)
     case DECLARATIONS:
       fprintf(stderr, "DECLARATION");
       break;
+      case TREE_PAR:
+      fprintf(stderr, "PARENTHESES");
+      break;
     default:
       fprintf(stderr, "UNKOWN");
       break;
@@ -286,12 +289,11 @@ void decompile(FILE *file, TREE *node)
       fprintf(file, "read > %s", node->symbol->text);
       break;
     case TREE_RETURN:
-      fprintf(file, "return (");
+      fprintf(file, "return ");
       for (i = 0; i < MAX_SONS; ++i)
       {
         decompile(file, node->son[i]);
       }
-      fprintf(file, ")");
       break;
     case TREE_ELSE:
       fprintf(file, "else {\n");
