@@ -1,0 +1,10 @@
+// UFRGS - Compiladores - Marcelo Johann - 2017/2
+
+(long) main()
+  {
+	a = 10*(2+3);
+	b = ((1-2)*a)/3;
+	c = a/(a-b);
+	d = a/(b+c);
+  }
+

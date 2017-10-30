@@ -471,7 +471,12 @@ void decompile(FILE *file, TREE *node)
     case TREE_SYMBOL:
       fprintf(file, "%s", node->symbol->text);
       break;
-    default:
+    case TREE_PAR:
+	  fprintf(file, "(");
+	  decompile(file, node->son[0]);
+	  fprintf(file,")");
+	  break;
+	default:
       fprintf(file, "UNKOWN");
       break;
     }

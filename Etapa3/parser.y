@@ -123,7 +123,7 @@
 	exp OPERATOR_NE exp {$$ = tree_create(TREE_NE,0, $1, $3 ,0 ,0);}|
 	exp OPERATOR_AND exp {$$ = tree_create(TREE_AND,0,$1, $3 ,0 ,0);}|
 	exp OPERATOR_OR exp {$$ = tree_create(TREE_OR, 0,$1, $3 ,0 ,0);}|
-	'(' exp ')' {$$ = $2;}
+	'(' exp ')' {$$ = tree_create(TREE_PAR, 0, $2, 0,0,0);}
 	;
 
 	// Lista de elementos do print
