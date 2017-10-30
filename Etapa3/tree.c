@@ -129,8 +129,14 @@ void tree_print(TREE *node, int level)
     case TREE_PARAM:
       fprintf(stderr, "PARAM");
       break;
+    case TREE_VECTOR:
+      fprintf(stderr, "VECTOR");
+      break;
     case TREE_VECTOR_VALUES:
       fprintf(stderr, "VECTOR_VALUES");
+      break;
+    case TREE_VECTOR_VALUES_POSITION:
+      fprintf(stderr, "VECTOR_VALUES_POSITION");
       break;
     case TREE_DECLARATION_SYMBOL_VECTOR:
       fprintf(stderr, "DECLARATION_SYMBOL_VECTOR");
@@ -140,6 +146,9 @@ void tree_print(TREE *node, int level)
       break;
     case TREE_DECLARATION_SYMBOL:
       fprintf(stderr, "DECLARATION_SYMBOL");
+      break;
+    case TREE_PRINTABLE:
+      fprintf(stderr, "TREE_PRINTABLE");
       break;
     case PROGRAM:
       break;
@@ -185,46 +194,76 @@ void decompile(FILE *file, TREE *node)
     switch (node->type)
     {
     case TREE_ADD:
-      fprintf(file, "SOMA");
+      decompile(file, node->son[0]);
+      fprintf(file, "+");
+      decompile(file, node->son[1]);
       break;
     case TREE_SUB:
-      fprintf(file, "SUB");
+      decompile(file, node->son[0]);
+      fprintf(file, "-");
+      decompile(file, node->son[1]);
       break;
     case TREE_MUL:
-      fprintf(file, "MULTI");
+      decompile(file, node->son[0]);
+      fprintf(file, "*");
+      decompile(file, node->son[1]);
       break;
     case TREE_DIV:
-      fprintf(file, "DIV");
+      decompile(file, node->son[0]);
+      fprintf(file, "/");
+      decompile(file, node->son[1]);
       break;
     case TREE_LESS:
-      fprintf(file, "LESS");
+      decompile(file, node->son[0]);
+      fprintf(file, "<");
+      decompile(file, node->son[1]);
       break;
     case TREE_GREATER:
-      fprintf(file, "GREATER");
+      decompile(file, node->son[0]);
+      fprintf(file, ">");
+      decompile(file, node->son[1]);
       break;
     case TREE_NOT:
-      fprintf(file, "NOT");
+      decompile(file, node->son[0]);
+      fprintf(file, "!");
+      decompile(file, node->son[1]);
       break;
     case TREE_LE:
-      fprintf(file, "LE");
+      decompile(file, node->son[0]);
+      fprintf(file, "<=");
+      decompile(file, node->son[1]);
       break;
     case TREE_GE:
-      fprintf(file, "GE");
+      decompile(file, node->son[0]);
+      fprintf(file, ">=");
+      decompile(file, node->son[1]);
       break;
     case TREE_EQ:
-      fprintf(file, "EQ");
+      decompile(file, node->son[0]);
+      fprintf(file, "==");
+      decompile(file, node->son[1]);
       break;
     case TREE_NE:
-      fprintf(file, "NE");
+      decompile(file, node->son[0]);
+      fprintf(file, "!=");
+      decompile(file, node->son[1]);
       break;
     case TREE_AND:
-      fprintf(file, "AND");
+      decompile(file, node->son[0]);
+      fprintf(file, "&&");
+      decompile(file, node->son[1]);
       break;
     case TREE_OR:
-      fprintf(file, "OR");
+      decompile(file, node->son[0]);
+      fprintf(file, "||");
+      decompile(file, node->son[1]);
       break;
     case TREE_ASSIGN:
-      fprintf(file, "ASSIGN");
+      fprintf(file, "%s=", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case TREE_IF:
       fprintf(file, "IF THEN");
@@ -233,7 +272,11 @@ void decompile(FILE *file, TREE *node)
       fprintf(file, "WHILE");
       break;
     case TREE_PRINT:
-      fprintf(file, "PRINT");
+      fprintf(file, "print ");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
       break;
     case TREE_READ:
       fprintf(file, "READ");
@@ -284,6 +327,22 @@ void decompile(FILE *file, TREE *node)
         decompile(file, node->son[i]);
       }
       break;
+    case TREE_VECTOR_VALUES_POSITION:
+      fprintf(file, "[");
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, "]");
+      break;
+    case TREE_VECTOR:
+      fprintf(file, "%s[", node->symbol->text);
+      for (i = 0; i < MAX_SONS; ++i)
+      {
+        decompile(file, node->son[i]);
+      }
+      fprintf(file, "]");
+      break;
     case TREE_FUNCTION:
       switch (node->son[0]->type)
       {
@@ -310,9 +369,9 @@ void decompile(FILE *file, TREE *node)
         fprintf(file, ")");
       }
       decompile(file, node->son[1]);
-      fprintf(file, "{");
+      fprintf(file, "{\n");
       decompile(file, node->son[2]);
-      fprintf(file, "}");
+      fprintf(file, "\n}");
       break;
     case TREE_KW_BYTE:
       fprintf(file, "byte");
@@ -330,16 +389,37 @@ void decompile(FILE *file, TREE *node)
       fprintf(file, "double");
       break;
     case TREE_PARAMS:
+      decompile(file, node->son[0]);
+      if (node->son[1] != 0)
+      {
+        fprintf(file, ",");
+      }
+      decompile(file, node->son[1]);
+      if (node->son[1] == 0)
+      {
+        fprintf(file, ")");
+      }
+      break;
+    case TREE_CMD_LIST:
+      fprintf(file, ";\n");
       for (i = 0; i < MAX_SONS; ++i)
       {
         decompile(file, node->son[i]);
       }
       break;
-    case TREE_CMD_LIST:
-      fprintf(file, "CMD_LIST");
-      break;
     case TREE_ASSIGN_VECTOR:
-      fprintf(file, "ASSIGN_VECTOR");
+      fprintf(file, "%s", node->symbol->text);
+      decompile(file, node->son[0]);
+      fprintf(file, "=");
+      decompile(file, node->son[1]);
+      break;
+    case TREE_PRINTABLE:
+      decompile(file, node->son[0]);
+      if (node->son[1] != 0)
+      {
+        fprintf(file, ",");
+      }
+      decompile(file, node->son[1]);
       break;
     case TREE_FUNCTION_CALL:
       fprintf(file, "FUNCTION_CALL");
@@ -349,10 +429,6 @@ void decompile(FILE *file, TREE *node)
       for (i = 0; i < MAX_SONS; ++i)
       {
         decompile(file, node->son[i]);
-      }
-      if(!node->son[0] == 0)
-      {
-        fprintf(file, ",");
       }
       break;
     case TREE_CMD_BLOCK:
@@ -373,6 +449,9 @@ void decompile(FILE *file, TREE *node)
         decompile(file, node->son[i]);
         fprintf(file, "\n");
       }
+      break;
+    case TREE_SYMBOL:
+      fprintf(file, "%s", node->symbol->text);
       break;
     default:
       fprintf(file, "UNKOWN");

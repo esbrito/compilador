@@ -5,9 +5,30 @@ mat: long[10];
 f: float=10.55;
 c: byte='x';
 d: byte=65;
-(long) main (){ASSIGNCMD_LIST}
-(long) incn (x:long,n:long,a:byte,{RETURN}
-(short) voidfunc (){}
+(long) main (){
+a=10;
+v[2]=v[10-1];
+print " Digite um numero: \n";
+READ;
+WHILE;
+print "Incrementado algumas vezes fica ",a,b,"\n";
+IF THEN;
+IF THEN;
+IF THEN;
+;
+;
+;
+;
+;
+;
+
+}
+(long) incn (x:long,n:long,a:byte){
+RETURN
+}
+(short) voidfunc (){
+
+}
 
 
 

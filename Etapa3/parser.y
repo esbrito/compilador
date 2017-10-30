@@ -86,10 +86,10 @@
 
 	cmd:
 	TK_IDENTIFIER '=' exp {$$ = tree_create(TREE_ASSIGN, $1, $3 ,0 ,0 ,0);}|
-	TK_IDENTIFIER '[' exp ']' '=' exp {$$ = tree_create(TREE_ASSIGN_VECTOR, $1, $3 ,$6 ,0 ,0);}|
+	TK_IDENTIFIER '[' exp ']' '=' exp {$$ = tree_create(TREE_ASSIGN_VECTOR, $1, tree_create(TREE_VECTOR_VALUES_POSITION, 0, $3 ,0 ,0 ,0) ,$6 ,0 ,0);}|
 	KW_IF '(' exp ')' KW_THEN cmd else {$$ = tree_create(TREE_IF, 0, $3 ,$6 ,$7 ,0);}|
 	KW_WHILE '(' exp ')' cmd {$$ = tree_create(TREE_WHILE, 0, $3 ,$5 ,0 ,0);}|
-	KW_PRINT printables {$$ = $2;}|
+	KW_PRINT printables {$$ = tree_create(TREE_PRINT, 0, $2 ,0 ,0 ,0);}|
 	KW_READ '>' TK_IDENTIFIER {$$ = tree_create(TREE_READ, $3, 0 ,0 ,0 ,0);}|
 	KW_RETURN exp {$$ = tree_create(TREE_RETURN, 0, $2 ,0 ,0 ,0);}| 
 	block {$$ = $1;}|
@@ -105,7 +105,7 @@
 	// Declaracao de expressoes
 	exp:
 	TK_IDENTIFIER {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
-	TK_IDENTIFIER '[' exp ']' {$$ = tree_create(TREE_SYMBOL, $1, $3 ,0 ,0 ,0);}|
+	TK_IDENTIFIER '[' exp ']' {$$ = tree_create(TREE_VECTOR, $1, $3 ,0 ,0 ,0);}|
 	TK_IDENTIFIER '(' params ')' {$$ = tree_create(TREE_FUNCTION_CALL, $1, $3 ,0, 0,0);}|
 	LIT_INTEGER {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
 	LIT_REAL {$$ = tree_create(TREE_SYMBOL, $1, 0 ,0 ,0 ,0);}|
@@ -127,14 +127,14 @@
 	;
 
 	// Lista de elementos do print
-	printables: elem restoElem {$$ = tree_create(TREE_PRINT, 0, $1 ,$2 ,0 ,0);}
+	printables: elem restoElem {$$ = tree_create(TREE_PRINTABLE, 0, $1 ,$2 ,0 ,0);}
 	;
 
 	elem: LIT_STRING {$$ = tree_create(TREE_SYMBOL, $1,0,0 ,0 ,0);}| 
 	exp {$$ = $1;}
 	;
 
-	restoElem: ',' elem restoElem {$$ = tree_create(TREE_PRINT, 0, $2 ,$3 ,0 ,0);}| 
+	restoElem: ',' elem restoElem {$$ = tree_create(TREE_PRINTABLE, 0, $2 ,$3 ,0 ,0);}| 
 	{$$ = 0;}
 	;
 
@@ -163,7 +163,8 @@
 	;
 
 	// lista de parametros para declaracao
-	params: param restoParam {$$ = tree_create(TREE_PARAMS, 0,$1, $2 ,0 ,0);}| {$$ = 0;}/*empty*/
+	params: param restoParam {$$ = tree_create(TREE_PARAMS, 0,$1, $2 ,0 ,0);}|
+	{$$ = 0;}/*empty*/
 	;
 
 	// param pode receber tipo ou não, depende se for usado na declaracao ou chamada da
