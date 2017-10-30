@@ -15,10 +15,10 @@ void tree_print(TREE *node, int level)
 {
   int i = 0;
   if (node)
-  {
+  {    
     for (i = 0; i < level; ++i)
     {
-      fprintf(stderr, "---");
+      fprintf(stderr, ">");
     }
     fprintf(stderr, "TREE(");
 
@@ -151,8 +151,10 @@ void tree_print(TREE *node, int level)
       fprintf(stderr, "TREE_PRINTABLE");
       break;
     case PROGRAM:
+      fprintf(stderr, "PROGRAM");
       break;
     case DECLARATIONS:
+      fprintf(stderr, "DECLARATION");
       break;
     default:
       fprintf(stderr, "UNKOWN");
@@ -170,14 +172,7 @@ void tree_print(TREE *node, int level)
 
     for (i = 0; i < MAX_SONS; ++i)
     {
-      if (node->type == PROGRAM || node->type == DECLARATIONS)
-      {
-        tree_print(node->son[i], level);
-      }
-      else
-      {
-        tree_print(node->son[i], level + 1);
-      }
+      tree_print(node->son[i], level + 1);
     }
   }
 }
@@ -296,7 +291,7 @@ void decompile(FILE *file, TREE *node)
       {
         decompile(file, node->son[i]);
       }
-      fprintf(file, ")");      
+      fprintf(file, ")");
       break;
     case TREE_ELSE:
       fprintf(file, "else {\n");
@@ -479,15 +474,6 @@ void decompile(FILE *file, TREE *node)
     default:
       fprintf(file, "UNKOWN");
       break;
-    }
-
-    if (node->symbol)
-    {
-      //   fprintf(file, ",%s\n", node->symbol->text);
-    }
-    else
-    {
-      // fprintf(file, "\n");
     }
   }
 }

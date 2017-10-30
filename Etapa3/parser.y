@@ -70,10 +70,10 @@
 	%left '*' '/'
 
 	%%
-	program: declarationsList {ast_tree = tree_create(PROGRAM, 0, $1 ,0 ,0,0);}
+	program: declarationsList {ast_tree = tree_create(PROGRAM, 0, $1 ,0 ,0,0);tree_print($1, 0);}
 	;
 
-	declarationsList: declarations declarationsList {$$ = tree_create(DECLARATIONS, 0, $1 ,$2 ,0, 0); tree_print($1, 0);}|
+	declarationsList: declarations declarationsList {$$ = tree_create(DECLARATIONS, 0, $1 ,$2 ,0, 0); }|
 	 {$$ = 0;}
 	;
 
