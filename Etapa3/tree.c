@@ -9,6 +9,8 @@ TREE *tree_create(int type, HASH_NODE *symbol, TREE *s0, TREE *s1, TREE *s2, TRE
   new->son[1] = s1;
   new->son[2] = s2;
   new->son[3] = s3;
+
+  return new;
 }
 
 void tree_print(TREE *node, int level)
@@ -150,8 +152,8 @@ void tree_print(TREE *node, int level)
     case TREE_PRINTABLE:
       fprintf(stderr, "TREE_PRINTABLE");
       break;
-    case PROGRAM:
-      fprintf(stderr, "PROGRAM");
+    case TREE_PROGRAM:
+      fprintf(stderr, "TREE_PROGRAM");
       break;
     case DECLARATIONS:
       fprintf(stderr, "DECLARATION");
@@ -160,7 +162,7 @@ void tree_print(TREE *node, int level)
       fprintf(stderr, "PARENTHESES");
       break;
     default:
-      fprintf(stderr, "UNKOWN");
+      fprintf(stderr, "UNKOWN WITH TOKEN %d", node-> type);
       break;
     }
 
@@ -439,9 +441,9 @@ void decompile(FILE *file, TREE *node)
       break;
     case TREE_FUNCTION_CALL:
       fprintf(file, "%s(", node->symbol->text);
-      for (i = 0; i < MAX_SONS; ++i)
-      {
-        decompile(file, node->son[i]);
+      decompile(file, node->son[0]);
+      if (node->son[0] == 0) {
+        fprintf(stderr, ")");
       }
       break;
     case TREE_PARAM:
@@ -457,7 +459,7 @@ void decompile(FILE *file, TREE *node)
         decompile(file, node->son[i]);
       }
       break;
-    case PROGRAM:
+    case TREE_PROGRAM:
       for (i = 0; i < MAX_SONS; ++i)
       {
         decompile(file, node->son[i]);
