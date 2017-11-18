@@ -3,7 +3,8 @@
 #include "tree.h"
 #include "y.tab.h"
 
-void semanticSetTypes(TREE *node) {
+void semanticSetTypes(TREE *node)
+{
     int i;
 
     if (!node) return;
@@ -68,9 +69,61 @@ void semanticSetTypes(TREE *node) {
 }
 
 
-void semanticCheckUndeclared() {
+void semanticCheckUndeclared() 
+{
     hashCheckUndeclared();
 }
 
 
-void semanticCheckUsage();
+void semanticCheckUsage(TREE *node)
+{
+    int i;
+
+    if (!node) return;
+
+    // check assignment left-hand side 
+    if (node->type == TREE_ASSIGN)
+    {
+        if (node->symbol->type != SYMBOL_VAR)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar\n", node->symbol->text);
+            found_semantic_err = 1;
+        }
+    }
+
+    /* POSSIVELMENTE ERRADO - o lado direito nao necesseriamente sera uma variavel, pode
+     * ser variavel, posicao de vetor, chamada de funcao, etc
+     *
+    // check assignement right-hand side
+    if (node->type == TREE_SYMBOL)
+    {
+        if (node->symbol->type != SYMBOL_VAR)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar\n", node->symbol->text);
+            found_semantic_err = 1;
+        }
+    }
+    */
+
+    if (node->type == TREE_FUNCTION_CALL)
+    {
+        if (node->symbol->type != SYMBOL_FUN)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a function\n", node->symbol->text);
+            found_semantic_err = 1;
+        }
+    }
+    
+    if (node->type == TREE_VECTOR)
+    {
+        if (node->symbol->type != SYMBOL_VEC)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a vector\n", node->symbol->text);
+            found_semantic_err = 1;
+        }
+    }
+
+    // recursion on the rest of the tree
+    for (i=0; i<MAX_SONS; ++i)
+        semanticCheckUsage(node->son[i]);
+}

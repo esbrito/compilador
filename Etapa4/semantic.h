@@ -7,7 +7,7 @@
 
 void semanticSetTypes(TREE *node);
 void semanticCheckUndeclared();
-void semanticCheckUsage();
-void semanticCheckOperands();
+void semanticCheckUsage(TREE *node);
+void semanticCheckOperands(TREE *node);
 
 #endif /* semantic_h */

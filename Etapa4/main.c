@@ -32,7 +32,7 @@ int main(int argc, char** argv)
     //hash_table_print();
   
   // Testa para erros semanticos
-  if ( foundSemanticErr() )
+  if ( foundSemanticErr() == 1 )
   {
     fprintf(stderr, "Semantic ERROR(s) found: unable to compile\n");
     exit(4);
