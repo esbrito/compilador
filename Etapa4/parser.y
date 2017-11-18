@@ -77,6 +77,7 @@
         semanticSetTypes($1);
         semanticCheckUndeclared();
         semanticCheckUsage($1);
+        semanticCheckOperands($1);
     }
 	;
 

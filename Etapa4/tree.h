@@ -58,6 +58,7 @@ typedef struct tree_node
     HASH_NODE *symbol;
     struct tree_node *son[MAX_SONS];
     int line;
+    int functionArgs;
 } TREE;
 
 TREE *tree_create(int type, HASH_NODE *symbol, TREE *s0, TREE *s1, TREE *s2, TREE *s3);

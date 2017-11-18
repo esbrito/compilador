@@ -2,6 +2,9 @@
 #include "hash.h"
 #include "tree.h"
 #include "y.tab.h"
+#include <string.h>
+
+struct fun_node *list = 0;
 
 void semanticSetTypes(TREE *node)
 {
@@ -55,6 +58,8 @@ void semanticSetTypes(TREE *node)
         else
         {
             node->symbol->type = SYMBOL_FUN;
+            node->functionArgs = countSons(node->son[1]); //needed to check with function call later
+            list = funlist_insert(node->symbol->text, node->functionArgs, list); //insert declaration on list
             if (node->son[0]->type == TREE_KW_BYTE) { node->symbol->datatype = DATATYPE_BYTE; }
             if (node->son[0]->type == TREE_KW_SHORT) { node->symbol->datatype = DATATYPE_SHORT; }
             if (node->son[0]->type == TREE_KW_LONG) { node->symbol->datatype = DATATYPE_LONG; }
@@ -86,7 +91,7 @@ void semanticCheckUsage(TREE *node)
     {
         if (node->symbol->type != SYMBOL_VAR)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar. Line %d \n", node->symbol->text, node->line);
             found_semantic_err = 1;
         }
     }
@@ -109,7 +114,7 @@ void semanticCheckUsage(TREE *node)
     {
         if (node->symbol->type != SYMBOL_FUN)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s must be a function\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a function. Line %d\n", node->symbol->text, node->line);
             found_semantic_err = 1;
         }
     }
@@ -118,7 +123,7 @@ void semanticCheckUsage(TREE *node)
     {
         if (node->symbol->type != SYMBOL_VEC)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s must be a vector\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a vector. Line %d\n", node->symbol->text, node->line);
             found_semantic_err = 1;
         }
     }
@@ -128,7 +133,16 @@ void semanticCheckUsage(TREE *node)
     {
         if ( !isConditional(node->son[0]->type) )
         {
-            fprintf(stderr, "Semantic ERROR: testing expression must be a conditional\n");
+            fprintf(stderr, "Semantic ERROR: testing expression must be a conditional. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+    
+    if (node->type == TREE_READ)
+    {
+        if (node->symbol->type != SYMBOL_VAR)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar. Line %d\n", node->symbol->text, node->line);
             found_semantic_err = 1;
         }
     }
@@ -138,6 +152,61 @@ void semanticCheckUsage(TREE *node)
         semanticCheckUsage(node->son[i]);
 }
 
+void semanticCheckOperands(TREE *node)
+{
+    int i;
+
+    if (!node) return;
+
+    // check arithmetic operators 
+    if ( isArithmetic(node->type) ) 
+    {
+        //check first operand
+        if ( isConditional(node->son[0]->type) || isLogic(node->son[0]->type) ) 
+        {
+            fprintf(stderr, "Semantic ERROR: opreand cannot be a conditional or logic expression. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+        
+        //check second operand
+        if ( isConditional(node->son[1]->type) || isLogic(node->son[1]->type) ) 
+        {
+            fprintf(stderr, "Semantic ERROR: opreand cannot be a conditional or logic expression. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+    
+    // check number of parameters on function calls
+    if (node->type == TREE_FUNCTION_CALL)
+    {
+        struct fun_node *decl = funlist_find(node->symbol->text, list);
+        if (decl->args > countSons(node->son[0]))
+        {
+            fprintf(stderr, "DEBUG: function call %s has too few args. Line %d\n", node->symbol->text, node->line);
+            found_semantic_err = 1;
+        }
+        if (decl->args < countSons(node->son[0]))
+        {
+            fprintf(stderr, "DEBUG: function call %s has too many args. Line %d\n", node->symbol->text, node->line);
+            found_semantic_err = 1;
+        }
+    }
+
+    // recursion on the rest of the tree
+    for (i=0; i<MAX_SONS; ++i)
+        semanticCheckOperands(node->son[i]);
+}
+
+/* AUX FUNCTIONS */
+
+int countSons(TREE *node)
+{
+    if (!node) return 0; // no args
+    if (node->son[1] == 0)
+        return 1;
+    return 1 + countSons(node->son[1]);
+}
+
 int isConditional(int type)
 {
     if (type==TREE_LESS||type==TREE_GREATER||type==TREE_EQ||type==TREE_NE||type==TREE_LE||type==TREE_GE)
@@ -145,3 +214,46 @@ int isConditional(int type)
     return 0;
 }
 
+int isLogic(int type)
+{
+    if (type==TREE_NOT||type==TREE_AND||type==TREE_OR)
+        return 1;
+    return 0;
+}
+
+int isArithmetic(int type)
+{
+    if (type==TREE_ADD||type==TREE_SUB||type==TREE_MUL||type==TREE_DIV)
+        return 1;
+    return 0;
+}
+
+/* END OF AUX FUNCTIONS */
+
+/* FUNC LIST */
+
+struct fun_node *funlist_insert(char *text, int args, struct fun_node *list)
+{
+    struct fun_node *new;
+    new = (struct fun_node*)calloc(1, sizeof(struct fun_node));
+    new->text = calloc(strlen(text)+1, sizeof(1));
+    strcpy(new->text, text);
+    new->args = args;
+    new->next = list;
+    
+    return new;
+}
+
+struct fun_node *funlist_find(char *text, struct fun_node *list)
+{
+    struct fun_node *current = list;
+
+    while (current)
+    {
+        if(!strcmp(current->text, text))
+            return current;
+        current = current->next;
+    }
+}
+
+/* END OF FUNC LIST */
