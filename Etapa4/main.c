@@ -1,26 +1,12 @@
 
 extern TREE* ast_tree;
 
-
-FILE* open_file(char* path)
-{
-	FILE* file;
-	file = fopen(path,"w");
-	if(file == NULL)
-	{
-		fprintf(stderr,"ERROR: Couldn't open %s\n",path);
-		exit(1);
-  }
-  return file;
-}
-
-
 int main(int argc, char** argv)
 {
 
-  if(argc < 3)
+  if(argc < 2)
   {
-    fprintf(stderr, "Erro, faltao argumentos! Indique o nome do arquivo a ser lido e o nome do arquivo de saída");
+    fprintf(stderr, "Erro, faltao argumentos! Indique o nome do arquivo a ser lido");
     exit(99);
   }
 
@@ -43,9 +29,7 @@ int main(int argc, char** argv)
     printf("Token detectado: %d ---- Linha: %d\n", token, getLineNumber());
   }
 
-  
-  decompile(open_file(argv[2]), ast_tree);
-  //hash_table_print();
+    //hash_table_print();
   
   // Testa para erros semanticos
   if ( foundSemanticErr() )

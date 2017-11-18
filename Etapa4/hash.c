@@ -76,14 +76,19 @@ int hash_address(char *text)
     return address - 1;
 }
 
-void hashCheckUndeclared(){
+void hashCheckUndeclared()
+{
     int i;
     HASH_NODE *node;
-    for (i=0; i<HASH_SIZE; ++i) {
-        for (node=hash_table[i]; node; node=node->next) {
+    for (i = 0; i < HASH_SIZE; ++i)
+    {
+        for (node = hash_table[i]; node; node = node->next)
+        {
             if (node->type == TK_IDENTIFIER)
+            {
                 fprintf(stderr, "Semantic ERROR: symbol %s not declared\n", node->text);
-                found_semantic_err = 1; //set flag semantic err                 
+                found_semantic_err = 1; //set flag semantic err
+            }
         }
     }
 }
