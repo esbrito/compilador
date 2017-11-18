@@ -10,4 +10,7 @@ void semanticCheckUndeclared();
 void semanticCheckUsage(TREE *node);
 void semanticCheckOperands(TREE *node);
 
+/* AUXILIAR FUNC */
+int isConditional(int type);
+
 #endif /* semantic_h */

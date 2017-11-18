@@ -122,8 +122,26 @@ void semanticCheckUsage(TREE *node)
             found_semantic_err = 1;
         }
     }
+    
+    // testa o condicional do if e do while
+    if (node->type == TREE_IF || node->type == TREE_WHILE)
+    {
+        if ( !isConditional(node->son[0]->type) )
+        {
+            fprintf(stderr, "Semantic ERROR: testing expression must be a conditional\n");
+            found_semantic_err = 1;
+        }
+    }
 
     // recursion on the rest of the tree
     for (i=0; i<MAX_SONS; ++i)
         semanticCheckUsage(node->son[i]);
 }
+
+int isConditional(int type)
+{
+    if (type==TREE_LESS||type==TREE_GREATER||type==TREE_EQ||type==TREE_NE||type==TREE_LE||type==TREE_GE)
+        return 1;
+    return 0;
+}
+
