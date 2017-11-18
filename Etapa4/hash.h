@@ -1,3 +1,4 @@
+#include "tree.h"
 #ifndef hash_h
 #define hash_h
 
@@ -20,6 +21,7 @@ typedef struct hash_node
   char* text;
   int datatype;
   struct hash_node* next;
+  struct tree_node *tree;
 } HASH_NODE;
 
 

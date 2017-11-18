@@ -86,7 +86,7 @@ void hashCheckUndeclared()
         {
             if (node->type == TK_IDENTIFIER)
             {
-                fprintf(stderr, "Semantic ERROR: symbol %s not declared\n", node->text);
+                fprintf(stderr, "Semantic ERROR: symbol %s not declared. Line: %d \n", node->text, node->tree->line);
                 found_semantic_err = 1; //set flag semantic err
             }
         }

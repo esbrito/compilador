@@ -13,6 +13,10 @@ TREE *tree_create(int type, HASH_NODE *symbol, TREE *s0, TREE *s1, TREE *s2, TRE
   TREE *new;
   new = (TREE *)calloc(1, sizeof(TREE));
   new->type = type;
+  if(symbol)
+  {
+  symbol->tree = new;
+  }
   new->symbol = symbol;
   new->son[0] = s0;
   new->son[1] = s1;
