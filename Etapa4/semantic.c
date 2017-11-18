@@ -95,20 +95,29 @@ void semanticCheckUsage(TREE *node)
             found_semantic_err = 1;
         }
     }
-
-    /* POSSIVELMENTE ERRADO - o lado direito nao necesseriamente sera uma variavel, pode
-     * ser variavel, posicao de vetor, chamada de funcao, etc
-     *
-    // check assignement right-hand side
-    if (node->type == TREE_SYMBOL)
+    
+     // check assignment left-hand side 
+    if (node->type == TREE_ASSIGN_VECTOR)
     {
-        if (node->symbol->type != SYMBOL_VAR)
+        if (node->symbol->type != SYMBOL_VEC)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a vector. Line %d \n", node->symbol->text, node->line);
             found_semantic_err = 1;
         }
     }
-    */
+
+    /* POSSIVELMENTE ERRADO - o lado direito nao necesseriamente sera uma variavel, pode
+     * ser variavel, posicao de vetor, chamada de funcao, etc
+     **/
+    // check assignement right-hand side
+    if (node->type == TREE_SYMBOL)
+    {
+        if (node->symbol->type != SYMBOL_VAR && node->symbol->type != TREE_VECTOR && node->symbol->type != TREE_FUNCTION_CALL && node->symbol->type != LIT_REAL && node->symbol->type != LIT_CHAR && node->symbol->type != LIT_INTEGER)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar. Line %d\n", node->symbol->text, node->line);
+            found_semantic_err = 1;
+        }
+    }
 
     if (node->type == TREE_FUNCTION_CALL)
     {

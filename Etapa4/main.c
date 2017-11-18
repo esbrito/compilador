@@ -7,14 +7,14 @@ int main(int argc, char** argv)
   if(argc < 2)
   {
     fprintf(stderr, "Erro, faltao argumentos! Indique o nome do arquivo a ser lido");
-    exit(99);
+    exit(1);
   }
 
   FILE* file = fopen(argv[1],"r");
 	if(file == NULL)
 	{
     fprintf(stderr, "Erro, ao ler arquivo!");
-    exit(99);
+    exit(2);
 	}
 	else
 	{

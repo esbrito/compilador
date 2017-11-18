@@ -1,0 +1,42 @@
+// UFRGS - Compiladores - Marcelo Johann - 2017/2
+
+var: short = 0;
+var: short = 0; //erro (redeclarado)
+vec: long[10];
+c: short = 0;
+
+
+(long) main()
+  {
+    var = 5;
+    var = c;
+    var = vec[0];
+    var = f();
+    var = vec; //erro
+    var = f; //erro
+
+
+    vec = 5; //erro
+    vec = f; //erro
+    vec = var; //erro
+    f = vec; //erro
+    f = 5; //erro
+    f = var; //erro
+    b = 3; //erro (nao declarado)
+
+
+    vec[1] = var;
+    vec[1] = 5;
+    vec[1] = f();
+    vec[1] = f; //erro
+    vec[1] = vec; //erro
+    f[1] = var; //erro (f nao eh vetor)
+    var[1] = var; //erro (var nao eh vetor)
+    var[1] = 5; //erro  (var nao eh vetor)
+
+  }
+
+(short) f()
+{
+    return (0);    
+}
