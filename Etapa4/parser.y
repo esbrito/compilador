@@ -76,6 +76,7 @@
         ast_tree = tree_create(TREE_PROGRAM, 0, $1 ,0 ,0,0);tree_print($1, 0);
         semanticSetTypes($1);
         semanticCheckUndeclared();
+        semanticCheckUsage($1);
     }
 	;
 
