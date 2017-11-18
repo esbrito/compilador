@@ -12,7 +12,7 @@ void semanticSetTypes(TREE *node) {
     {
         if (node->symbol->type != TK_IDENTIFIER)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s already declared. Line: %d \n", node->symbol->text, node->line);
             found_semantic_err = 1; //set flag semantic err
         }
         else
@@ -30,7 +30,7 @@ void semanticSetTypes(TREE *node) {
     {
         if (node->symbol->type != TK_IDENTIFIER)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s already declared. Line: %d \n", node->symbol->text, node->line);
             found_semantic_err = 1; //set flag semantic err
         }
         else
@@ -48,7 +48,7 @@ void semanticSetTypes(TREE *node) {
     {
         if (node->symbol->type != TK_IDENTIFIER)
         {
-            fprintf(stderr, "Semantic ERROR: identifier %s already declared\n", node->symbol->text);
+            fprintf(stderr, "Semantic ERROR: identifier %s already declared. Line: %d \n", node->symbol->text, node->line);
             found_semantic_err = 1; //set flag semantic err
         }
         else

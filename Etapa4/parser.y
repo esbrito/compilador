@@ -79,14 +79,14 @@
     }
 	;
 
-	declarationsList: declarations declarationsList {$$ = tree_create(DECLARATIONS, 0, $1 ,$2 ,0, 0); }|
+	declarationsList: declarations declarationsList {$$ = tree_create(DECLARATIONS, 0, $1 ,$2 ,0, 0); $$->line = getLineNumber();}|
 	 {$$ = 0;}
 	;
 
 	declarations:
-	TK_IDENTIFIER  ':' types '=' initialValueTypes ';'  {$$ = tree_create(TREE_DECLARATION_SCALAR, $1,$3, $5 ,0 ,0);} |
+	TK_IDENTIFIER  ':' types '=' initialValueTypes ';'  {$$ = tree_create(TREE_DECLARATION_SCALAR, $1,$3, $5 ,0 ,0);  $$->line = getLineNumber();} |
 	TK_IDENTIFIER  ':' types '[' LIT_INTEGER ']' vectorInit   ';' {$$ = tree_create(TREE_DECLARATION_VECTOR,$1,$3, tree_create(TREE_DECLARATION_VECTOR_NUMBER,$5,0,0,0,0),$7, 0);}|
-	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);}
+	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);  $$->line = getLineNumber();}
 	;
 
 
