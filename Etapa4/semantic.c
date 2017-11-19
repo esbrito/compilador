@@ -181,14 +181,14 @@ void semanticCheckOperands(TREE *node)
         //check first operand
         if ( isConditional(node->son[0]->type) || isLogic(node->son[0]->type) ) 
         {
-            fprintf(stderr, "Semantic ERROR: opreand cannot be a conditional or logic expression. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: operand cannot be a conditional or logic expression. Line %d\n", node->line);
             found_semantic_err = 1;
         }
         
         //check second operand
         if ( isConditional(node->son[1]->type) || isLogic(node->son[1]->type) ) 
         {
-            fprintf(stderr, "Semantic ERROR: opreand cannot be a conditional or logic expression. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: operand cannot be a conditional or logic expression. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
@@ -223,13 +223,13 @@ void semanticCheckOperands(TREE *node)
     // check assign datatype consistency
     if (node->type == TREE_ASSIGN)
     {
-        if (isDatatypeInt(node->symbol->datatype) && isFloat(node->son[0]))
+        if (isDatatypeInt(node->symbol->datatype) && !isInteger(node->son[0]))
         {
             fprintf(stderr, "Semantic ERROR: assigning non-integer value to a integer variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
         
-        if (isDatatypeFloat(node->symbol->datatype) && isInteger(node->son[0]))
+        if (isDatatypeFloat(node->symbol->datatype) && !isFloat(node->son[0]))
         {
             fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
             found_semantic_err = 1;
@@ -242,15 +242,15 @@ void semanticCheckOperands(TREE *node)
         TREE *ret;
         if ((ret = findReturn(node->son[2])) != 0)
         {
-            if (isDatatypeInt(node->symbol->datatype) && isFloat(ret->son[0]))
+            if (isDatatypeInt(node->symbol->datatype) && !isInteger(ret->son[0]))
             {
-                fprintf(stderr, "Semantic ERROR: expects return type Integer. Returning Float instead. Line %d\n", node->line);
+                fprintf(stderr, "Semantic ERROR: expects return type Integer. Line %d\n", node->line);
                 found_semantic_err = 1;
             }
 
-            if (isDatatypeFloat(node->symbol->datatype) && isInteger(ret->son[0]))
+            if (isDatatypeFloat(node->symbol->datatype) && !isFloat(ret->son[0]))
             {
-                fprintf(stderr, "Semantic ERROR: expects return type Float. Returning Integer instead. Line %d\n", node->line);
+                fprintf(stderr, "Semantic ERROR: expects return type Float. Line %d\n", node->line);
                 found_semantic_err = 1;
             }
         }
@@ -301,9 +301,9 @@ int isDiffParam(TREE *decl, TREE* call)
         return 1;
     if (decl->son[0] && !call->son[0]) //call zero args
         return 1;
-    if (isDatatypeInt(decl->son[0]->son[0]->type) && isFloat(call->son[0]))
+    if (isDatatypeInt(decl->son[0]->son[0]->type) && !isInteger(call->son[0]))
         return 1;
-    if (isDatatypeFloat(decl->son[0]->son[0]->type) && isInteger(call->son[0]))
+    if (isDatatypeFloat(decl->son[0]->son[0]->type) && !isFloat(call->son[0]))
         return 1;
     return isDiffParam(decl->son[1], call->son[1]);
 }
