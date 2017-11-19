@@ -236,6 +236,23 @@ void semanticCheckOperands(TREE *node)
         }
     }
 
+    // check assign vector datatype consistency
+    if (node->type == TREE_ASSIGN_VECTOR)
+    {
+        if (isDatatypeInt(node->symbol->datatype) && !isInteger(node->son[1]))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-integer value to a integer variable. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+        
+        if (isDatatypeFloat(node->symbol->datatype) && !isFloat(node->son[1]))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+    
+
     // check function return type
     if (node->type == TREE_FUNCTION)
     {
