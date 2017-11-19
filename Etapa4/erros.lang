@@ -3,6 +3,8 @@
 var: short = 0;
 var: short = 0; //erro (redeclarado)
 vec: long[10];
+vecs: short[10];
+
 c: short = 0;
 varb: byte = 0;
 varl: long = 0;
@@ -38,6 +40,16 @@ vard: double = 0.0;
     var[1] = 5; //erro  (var nao eh vetor)
 
 
+    //TODO - DECIDIR SE ISSO DEVE PASSAR OU NAO
+    var = 'c';
+    varb = 'c';
+    varf = 'c';
+    vard = 'c';
+    varl = 'c';
+    vec[1] = 'c';
+    // 
+
+
     var = 5.5; //erro
     var = varb;
     var = varl;
@@ -45,12 +57,71 @@ vard: double = 0.0;
     var = vard; //erro
     var = varb + varl; 
     var = varb + varl + varf; //erro
+    varb = var + varl + varf; //erro
+    varf = var + varl + varf; 
     varf = var; //erro
     varf = var + vard;
+
+    var = (var > 3); //erro (é logico, nao deveria passar) -> NOT WORKING
+
+    var = f2(1,2, 3);
+    vecs = f2(1,2, 3);
+    varb = f2(1,2, 3); //erro (tipo invalido)  -> NOT WORKING
+    vec[1] = f2(1,2, 3); //erro (tipo invalido) -> NOT WORKING
+    varb = f2(1,2, 3); //erro (tipo invalido) -> NOT WORKING
+    var = f2(1,2); //erro (poucos argumentos)
+    var = f2(1,2,4,5); //erro (muitos argumentos)
+
+    var = f2(1,2, f()); //erro (retorno de f não é byte) -> NOT WORKING
+    var = f2(1,2, 2 > 5); // erro (condicional) -> NOT WORKING
+
+    print "Incrementado algumas vezes fica ",var,varb,"\n"; //-> NOT WORKING
 
   }
 
 (short) f()
 {
     return (0);    
+}
+
+(short) f2(x: long, n: long, a: byte) //-> NOT WORKING( diz que nao ta declarado)
+{
+    return (0);    
+}
+
+(short) g() //error (sem return) // TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO
+{
+
+
+
+
+
+
+
+}
+
+
+(short) t() 
+{
+    return (1.0);    //erro (retorna tipo errado) -> NOT WORKING
+}
+
+(short) u() 
+{
+    return (varb);    //erro (retorna tipo errado) -> NOT WORKING
+}
+
+(short) s() 
+{
+    return (vec);    //erro (retorna tipo errado) 
+}
+
+(long) z() 
+{
+    return (vec[var]);    
+}
+
+(short) i() 
+{
+    return (vec[var]);    //erro (retorna tipo errado) -> NOT WORKING
 }

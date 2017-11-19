@@ -88,7 +88,7 @@
 	declarations:
 	TK_IDENTIFIER  ':' types '=' initialValueTypes ';'  {$$ = tree_create(TREE_DECLARATION_SCALAR, $1,$3, $5 ,0 ,0);$$->line = getLineNumber();} |
 	TK_IDENTIFIER  ':' types '[' LIT_INTEGER ']' vectorInit   ';' {$$ = tree_create(TREE_DECLARATION_VECTOR,$1,$3, tree_create(TREE_DECLARATION_VECTOR_NUMBER,$5,0,0,0,0),$7, 0);$$->line = getLineNumber();}|
-	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);$$->line = getLineNumber();}
+	'(' types ')' TK_IDENTIFIER '(' params ')' block  {$$ = tree_create(TREE_FUNCTION, $4,$2, $6 ,$8 ,0);$$->line = $2->line;}
 	;
 
 
