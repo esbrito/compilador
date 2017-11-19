@@ -4,7 +4,10 @@ var: short = 0;
 var: short = 0; //erro (redeclarado)
 vec: long[10];
 c: short = 0;
-
+varb: byte = 0;
+varl: long = 0;
+varf: float = 0.0;
+vard: double = 0.0;
 
 (long) main()
   {
@@ -33,6 +36,17 @@ c: short = 0;
     f[1] = var; //erro (f nao eh vetor)
     var[1] = var; //erro (var nao eh vetor)
     var[1] = 5; //erro  (var nao eh vetor)
+
+
+    var = 5.5; //erro
+    var = varb;
+    var = varl;
+    var = varf; //erro
+    var = vard; //erro
+    var = varb + varl; 
+    var = varb + varl + varf; //erro
+    varf = var; //erro
+    varf = var + vard;
 
   }
 

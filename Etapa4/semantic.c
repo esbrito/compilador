@@ -312,8 +312,8 @@ int isFloat(TREE *node)
     if (isArithmetic(node->type))
     {
         int left, right;
-        left = isInteger(node->son[0]);
-        right = isInteger(node->son[1]);
+        left = isFloat(node->son[0]);
+        right = isFloat(node->son[1]);
         if (left || right) // if only one operand is float, exp is float
             return 1;
     }
