@@ -12,6 +12,14 @@ void semanticSetTypes(TREE *node)
 
     if (!node) return;
 
+    if (node->type == TREE_SYMBOL)
+    {
+        if (node->symbol->type == LIT_INTEGER)
+            node->symbol->datatype = DATATYPE_SHORT;
+        if (node->symbol->type == LIT_REAL)
+            node->symbol->datatype = DATATYPE_FLOAT;
+    }
+
     if (node->type == TREE_DECLARATION_SCALAR)
     {
         if (node->symbol->type != TK_IDENTIFIER)

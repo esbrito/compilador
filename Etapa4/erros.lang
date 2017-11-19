@@ -38,7 +38,8 @@ vard: double = 0.0;
     f[1] = var; //erro (f nao eh vetor)
     var[1] = var; //erro (var nao eh vetor)
     var[1] = 5; //erro  (var nao eh vetor)
-
+    var[vaf] = 5; //erro
+    var[3.14] = 5; //erro
 
     //TODO - DECIDIR SE ISSO DEVE PASSAR OU NAO
     var = 'c';
