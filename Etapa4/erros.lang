@@ -87,7 +87,9 @@ vard: double = 0.0;
     varl = vec[varf]; //erro
     varl = vec[varf + var]; //erro
     
+    varl = f() + r(); //erro (pois r retorna double, logo atribui double em long)
 
+    varl = f() + g(); 
   }
 
 (short) f()
