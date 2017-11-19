@@ -77,6 +77,17 @@ vard: double = 0.0;
 
     print "Incrementado algumas vezes fica ",var,varb,"\n"; //-> NOT WORKING
 
+    varl = vec[var];
+    varl = vec[varl];
+    varl = vec[varb];
+    varl = vec[varb + var];
+    varl = vec[f()];
+    varl = vec[r()]; //erro (função r retorna um float) 
+    varl = vec[vard]; //erro
+    varl = vec[varf]; //erro
+    varl = vec[varf + var]; //erro
+    
+
   }
 
 (short) f()
@@ -124,4 +135,9 @@ vard: double = 0.0;
 (short) i() 
 {
     return (vec[var]);    //erro (retorna tipo errado) -> NOT WORKING
+}
+
+(double) r()
+{
+    return (0.0);
 }
