@@ -220,12 +220,48 @@ void semanticCheckOperands(TREE *node)
         }
     }
 
+    // check function return type
+    if (node->type == TREE_FUNCTION)
+    {
+        TREE *ret;
+        if ((ret = findReturn(node->son[2])) != 0)
+        {
+            if (isDatatypeInt(node->symbol->datatype) && isFloat(ret->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: expects return type Integer. Returning Float instead. Line %d\n", node->line);
+                found_semantic_err = 1;
+            }
+
+            if (isDatatypeFloat(node->symbol->datatype) && isInteger(ret->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: expects return type Float. Returning Integer instead. Line %d\n", node->line);
+                found_semantic_err = 1;
+            }
+        }
+        else
+        {
+            fprintf(stderr, "Semantic ERROR: function is missing a return type. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+
     // recursion on the rest of the tree
     for (i=0; i<MAX_SONS; ++i)
         semanticCheckOperands(node->son[i]);
 }
 
 /* AUX FUNCTIONS */
+
+TREE *findReturn(TREE *node)
+{
+    // process a block until finds a return cmd
+    if (!node) return 0;
+    if (!node->son[0]) return 0;
+    if (node->son[0]->type == TREE_RETURN)
+        return node->son[0]->son[0];
+    
+    return findReturn(node->son[1]);
+}
 
 int isDatatypeInt(int type)
 {
