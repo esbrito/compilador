@@ -111,7 +111,7 @@ vard: double = 0.0;
     return (0);    
 }
 
-(float) f3(x: long, n: long, a: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
+(float) f3(k: long, h: long, o: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
 {
     return (0);    
 }
@@ -133,14 +133,19 @@ vard: double = 0.0;
     return (1.0);    
 }
 
-(short) u() //erro (retorna tipo errado) -> NOT WORKING
+(short) u() //erro (retorna tipo errado) 
+{
+    return (varf);    
+}
+
+(double) q() //erro (retorna tipo errado) 
 {
     return (varb);    
 }
 
-(short) s() //erro (retorna tipo errado) -> NOT WORKING
+(short) s() 
 {
-    return (vec);    
+    return (vec);    //erro (identifier vec must be a scalar)
 }
 
 (long) z() 
@@ -148,7 +153,7 @@ vard: double = 0.0;
     return (vec[var]);    
 }
 
-(short) i()  //erro (retorna tipo errado) -> NOT WORKING
+(short) i()  //erro (retorna tipo errado) 
 {
     return (vec[var]);   
 }
