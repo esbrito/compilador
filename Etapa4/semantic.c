@@ -189,14 +189,33 @@ void semanticCheckOperands(TREE *node)
     if (node->type == TREE_FUNCTION_CALL)
     {
         struct fun_node *decl = funlist_find(node->symbol->text, list);
-        if (decl->args > countSons(node->son[0]))
+        if (decl != 0) //fails if func was not declared
         {
-            fprintf(stderr, "DEBUG: function call %s has too few args. Line %d\n", node->symbol->text, node->line);
+            if (decl->args > countSons(node->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: function call %s has too few args. Line %d\n", node->symbol->text, node->line);
+                found_semantic_err = 1;
+            }
+            if (decl->args < countSons(node->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: function call %s has too many args. Line %d\n", node->symbol->text, node->line);
+                found_semantic_err = 1;
+            }
+        }
+    }
+
+    // check assign datatype consistency
+    if (node->type == TREE_ASSIGN)
+    {
+        if (isDatatypeInt(node->symbol->datatype) && isFloat(node->son[0]))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-integer value to a integer variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
-        if (decl->args < countSons(node->son[0]))
+        
+        if (isDatatypeFloat(node->symbol->datatype) && isInteger(node->son[0]))
         {
-            fprintf(stderr, "DEBUG: function call %s has too many args. Line %d\n", node->symbol->text, node->line);
+            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
@@ -207,6 +226,104 @@ void semanticCheckOperands(TREE *node)
 }
 
 /* AUX FUNCTIONS */
+
+int isDatatypeInt(int type)
+{
+    if (type==DATATYPE_BYTE||type==DATATYPE_SHORT||type==DATATYPE_LONG)
+        return 1;
+    return 0;
+}
+
+int isDatatypeFloat(int type)
+{
+    if (type==DATATYPE_FLOAT||type==DATATYPE_DOUBLE)
+        return 1;
+    return 0;
+}
+
+int isInteger(TREE *node)
+{
+    if (!node) return 0;
+    
+    // test for literals and variables
+    if (node->type == TREE_SYMBOL)
+    {
+        if (isDatatypeInt(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for vector
+    if (node->type == TREE_VECTOR)
+    {
+        if (isDatatypeInt(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for function calls
+    if (node->type == TREE_FUNCTION_CALL)
+    {
+        if (isDatatypeInt(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for arithmetic operators
+    if (isArithmetic(node->type))
+    {
+        int left, right;
+        left = isInteger(node->son[0]);
+        right = isInteger(node->son[1]);
+        if (left && right) // both operands need to be int for the exp be int
+            return 1;
+    }
+
+    // test for parenthesis
+    if (node->type == TREE_PAR)
+        isInteger(node->son[0]);
+
+    return 0;
+}
+
+int isFloat(TREE *node)
+{
+    if (!node) return 0;
+    
+    // test for literals and variables
+    if (node->type == TREE_SYMBOL)
+    {
+        if (isDatatypeFloat(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for vector
+    if (node->type == TREE_VECTOR)
+    {
+        if (isDatatypeFloat(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for function calls
+    if (node->type == TREE_FUNCTION_CALL)
+    {
+        if (isDatatypeFloat(node->symbol->datatype))
+            return 1;
+    }
+
+    // test for arithmetic operators
+    if (isArithmetic(node->type))
+    {
+        int left, right;
+        left = isInteger(node->son[0]);
+        right = isInteger(node->son[1]);
+        if (left || right) // if only one operand is float, exp is float
+            return 1;
+    }
+    
+    // test for parenthesis
+    if (node->type == TREE_PAR)
+        isFloat(node->son[0]);
+
+    return 0; 
+}
 
 int countSons(TREE *node)
 {
@@ -263,6 +380,7 @@ struct fun_node *funlist_find(char *text, struct fun_node *list)
             return current;
         current = current->next;
     }
+    return 0;
 }
 
 /* END OF FUNC LIST */
