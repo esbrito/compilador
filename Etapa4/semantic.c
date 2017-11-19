@@ -59,7 +59,7 @@ void semanticSetTypes(TREE *node)
         {
             node->symbol->type = SYMBOL_FUN;
             node->functionArgs = countSons(node->son[1]); //needed to check with function call later
-            list = funlist_insert(node->symbol->text, node->functionArgs, list); //insert declaration on list
+            list = funlist_insert(node->symbol->text, node->functionArgs, node->son[1], list); //insert declaration on list
             if (node->son[0]->type == TREE_KW_BYTE) { node->symbol->datatype = DATATYPE_BYTE; }
             if (node->son[0]->type == TREE_KW_SHORT) { node->symbol->datatype = DATATYPE_SHORT; }
             if (node->son[0]->type == TREE_KW_LONG) { node->symbol->datatype = DATATYPE_LONG; }
@@ -185,12 +185,13 @@ void semanticCheckOperands(TREE *node)
         }
     }
     
-    // check number of parameters on function calls
+    // check number and datatype of parameters on function calls
     if (node->type == TREE_FUNCTION_CALL)
     {
         struct fun_node *decl = funlist_find(node->symbol->text, list);
         if (decl != 0) //fails if func was not declared
         {
+            //check number of args
             if (decl->args > countSons(node->son[0]))
             {
                 fprintf(stderr, "Semantic ERROR: function call %s has too few args. Line %d\n", node->symbol->text, node->line);
@@ -199,6 +200,13 @@ void semanticCheckOperands(TREE *node)
             if (decl->args < countSons(node->son[0]))
             {
                 fprintf(stderr, "Semantic ERROR: function call %s has too many args. Line %d\n", node->symbol->text, node->line);
+                found_semantic_err = 1;
+            }
+
+            //check type of args
+            if (isDiffParam(decl->params, node->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: parameters datatype on function call do not match with declaration. Line %d\n", node->line);
                 found_semantic_err = 1;
             }
         }
@@ -271,6 +279,27 @@ void semanticCheckOperands(TREE *node)
 
 /* AUX FUNCTIONS */
 
+int isDiffParam(TREE *decl, TREE* call)
+{
+    if (!decl && !call) //end of both lists
+        return 0;
+    if (!decl && call) //end of decl
+        return 1;
+    if (decl && !call) //end of call
+        return 1;
+    if (!decl->son[0] && !call->son[0]) // both zero args
+        return 0;
+    if (!decl->son[0] && call->son[0]) // decl zero args
+        return 1;
+    if (decl->son[0] && !call->son[0]) //call zero args
+        return 1;
+    if (isDatatypeInt(decl->son[0]->son[0]->type) && isFloat(call->son[0]))
+        return 1;
+    if (isDatatypeFloat(decl->son[0]->son[0]->type) && isInteger(call->son[0]))
+        return 1;
+    return isDiffParam(decl->son[1], call->son[1]);
+}
+
 TREE *findReturn(TREE *node)
 {
     // process a block until finds a return cmd
@@ -286,12 +315,16 @@ int isDatatypeInt(int type)
 {
     if (type==DATATYPE_BYTE||type==DATATYPE_SHORT||type==DATATYPE_LONG)
         return 1;
+    if (type==TREE_KW_BYTE||type==TREE_KW_SHORT||type==TREE_KW_LONG)
+        return 1;
     return 0;
 }
 
 int isDatatypeFloat(int type)
 {
     if (type==DATATYPE_FLOAT||type==DATATYPE_DOUBLE)
+        return 1;
+    if (type==TREE_KW_FLOAT||type==TREE_KW_DOUBLE)
         return 1;
     return 0;
 }
@@ -413,13 +446,14 @@ int isArithmetic(int type)
 
 /* FUNC LIST */
 
-struct fun_node *funlist_insert(char *text, int args, struct fun_node *list)
+struct fun_node *funlist_insert(char *text, int args, TREE* params, struct fun_node *list)
 {
     struct fun_node *new;
     new = (struct fun_node*)calloc(1, sizeof(struct fun_node));
     new->text = calloc(strlen(text)+1, sizeof(1));
     strcpy(new->text, text);
     new->args = args;
+    new->params = params;
     new->next = list;
     
     return new;

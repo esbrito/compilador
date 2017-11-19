@@ -74,6 +74,12 @@ vard: double = 0.0;
 
     var = f2(1,2, f()); //erro (retorno de f não é byte) -> NOT WORKING
     var = f2(1,2, 2 > 5); // erro (condicional) -> NOT WORKING
+    
+    var = f(var);
+    var = f2(var, var, var);
+    var = f(varf); //erro
+    var = f2(var, varf, vard); //erro
+
 
     print "Incrementado algumas vezes fica ",var,varb,"\n"; //-> NOT WORKING
 
@@ -92,9 +98,9 @@ vard: double = 0.0;
     varl = f() + g(); 
   }
 
-(short) f()
+(short) f(b: byte)
 {
-    return (0);    
+    return (varf);
 }
 
 (short) f2(x: long, n: long, a: byte) //-> NOT WORKING( diz que nao ta declarado)

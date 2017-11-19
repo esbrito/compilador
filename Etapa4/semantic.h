@@ -20,15 +20,17 @@ int isConditional(int type);
 int isArithmetic(int type);
 int isLogic(int type);
 int countSons(TREE *node);
+int isDiffParam(TREE *decl, TREE *call);
 
 /* FUNCTION ARGS LINKED LIST */
 struct fun_node {
     char *text;
     int args;
     struct fun_node *next;
+    TREE *params;
 };
 
-struct fun_node* funlist_insert(char *text, int args, struct fun_node *list);
+struct fun_node* funlist_insert(char *text, int args, TREE *params, struct fun_node *list);
 struct fun_node* funlist_find(char *text, struct fun_node *list);
 
 #endif /* semantic_h */

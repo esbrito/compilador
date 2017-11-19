@@ -7,6 +7,7 @@ d: float = 0.0;
 
 (long) main()
   {
+    if (a-5) then { };
     a = my_func();   
     a = 5;
     a = 10*(2+3);
