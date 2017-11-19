@@ -38,6 +38,8 @@ vard: double = 0.0;
     f[1] = var; //erro (f nao eh vetor)
     var[1] = var; //erro (var nao eh vetor)
     var[1] = 5; //erro  (var nao eh vetor)
+    vec[varf] = 5; //erro 
+    var[varf] = 5; //erro
     var[vaf] = 5; //erro
     var[3.14] = 5; //erro
 
@@ -63,7 +65,7 @@ vard: double = 0.0;
     varf = var; //erro
     varf = var + vard;
 
-    var = (var > 3); //erro (é logico, nao deveria passar) -> NOT WORKING
+    var = (var > 3); //erro (é logico, nao deveria passar) 
 
     var = f2(1,2, 3);
     vecs = f2(1,2, 3);
@@ -73,8 +75,8 @@ vard: double = 0.0;
     var = f2(1,2); //erro (poucos argumentos)
     var = f2(1,2,4,5); //erro (muitos argumentos)
 
-    var = f2(1,2, f()); //erro (retorno de f não é byte) -> NOT WORKING
-    var = f2(1,2, 2 > 5); // erro (condicional) -> NOT WORKING
+    var = f2(1,2, f()); //erro (retorno de f não é byte)
+    var = f2(1,2, 2 > 5); // erro (condicional) 
     
     var = f(var);
     var = f2(var, var, var);
@@ -88,7 +90,7 @@ vard: double = 0.0;
     varl = vec[varl];
     varl = vec[varb];
     varl = vec[varb + var];
-    varl = vec[f()];
+    varl = vec[f(1)];
     varl = vec[r()]; //erro (função r retorna um float) 
     varl = vec[vard]; //erro
     varl = vec[varf]; //erro
@@ -104,7 +106,7 @@ vard: double = 0.0;
     return (varf);
 }
 
-(short) f2(x: long, n: long, a: byte) //-> NOT WORKING( diz que nao ta declarado)
+(short) f2(x: long, n: long, a: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
 {
     return (0);    
 }
@@ -121,19 +123,19 @@ vard: double = 0.0;
 }
 
 
-(short) t() 
+(short) t() //erro (retorna tipo errado)
 {
-    return (1.0);    //erro (retorna tipo errado) -> NOT WORKING
+    return (1.0);    
 }
 
-(short) u() 
+(short) u() //erro (retorna tipo errado) -> NOT WORKING
 {
-    return (varb);    //erro (retorna tipo errado) -> NOT WORKING
+    return (varb);    
 }
 
-(short) s() 
+(short) s() //erro (retorna tipo errado) -> NOT WORKING
 {
-    return (vec);    //erro (retorna tipo errado) 
+    return (vec);    
 }
 
 (long) z() 
@@ -141,9 +143,9 @@ vard: double = 0.0;
     return (vec[var]);    
 }
 
-(short) i() 
+(short) i()  //erro (retorna tipo errado) -> NOT WORKING
 {
-    return (vec[var]);    //erro (retorna tipo errado) -> NOT WORKING
+    return (vec[var]);   
 }
 
 (double) r()
