@@ -245,6 +245,25 @@ void semanticCheckOperands(TREE *node)
         }
     }
 
+    // check vector index type 
+    if (node->type == TREE_ASSIGN_VECTOR)
+    {
+        if (!isInteger(node->son[0]->son[0]))
+        {
+            fprintf(stderr, "Semantic ERROR: vector index must be an integer. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+
+    if (node->type == TREE_VECTOR)
+    {
+        if (!isInteger(node->son[0]))
+        {
+            fprintf(stderr, "Semantic ERROR: vector index must be an integer. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+
     // recursion on the rest of the tree
     for (i=0; i<MAX_SONS; ++i)
         semanticCheckOperands(node->son[i]);
