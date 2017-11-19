@@ -50,7 +50,6 @@ vard: double = 0.0;
     vard = 'c';
     varl = 'c';
     vec[1] = 'c';
-    // 
 
 
     var = 5.5; //erro
@@ -84,7 +83,8 @@ vard: double = 0.0;
     var = f2(var, varf, vard); //erro
 
 
-    print "Incrementado algumas vezes fica ",var,varb,"\n"; //-> NOT WORKING
+    print "Incrementado algumas vezes fica ",var,varb,"\n";
+    print 'c';
 
     varl = vec[var];
     varl = vec[varl];

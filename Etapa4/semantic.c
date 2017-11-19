@@ -138,7 +138,7 @@ void semanticCheckUsage(TREE *node)
     // check assignement right-hand side
     if (node->type == TREE_SYMBOL)
     {
-        if (node->symbol->type != SYMBOL_VAR && node->symbol->type != TREE_VECTOR && node->symbol->type != TREE_FUNCTION_CALL && node->symbol->type != LIT_REAL && node->symbol->type != LIT_CHAR && node->symbol->type != LIT_INTEGER)
+        if (node->symbol->type != SYMBOL_VAR && node->symbol->type != TREE_VECTOR && node->symbol->type != TREE_FUNCTION_CALL && node->symbol->type != LIT_REAL && node->symbol->type != LIT_CHAR && node->symbol->type != LIT_INTEGER && node->symbol->type != LIT_STRING)
         {
             fprintf(stderr, "Semantic ERROR: identifier %s must be a scalar. Line %d\n", node->symbol->text, node->line);
             found_semantic_err = 1;
@@ -182,6 +182,14 @@ void semanticCheckUsage(TREE *node)
         }
     }
 
+    if (node->type == TREE_PRINT)
+    {
+        if (!isPrintable(node->son[0]))
+        {
+            fprintf(stderr, "Semantic ERROR: print expects a String or an expression. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
     // recursion on the rest of the tree
     for (i=0; i<MAX_SONS; ++i)
         semanticCheckUsage(node->son[i]);
@@ -321,6 +329,23 @@ void semanticCheckOperands(TREE *node)
 }
 
 /* AUX FUNCTIONS */
+
+int isExp(TREE *node)
+{
+    if(!node) return 0;
+    if(node->type==TREE_SYMBOL||node->type==TREE_SYMBOL||node->type==TREE_SYMBOL||isArithmetic(node->type)||isLogic(node->type)||isConditional(node->type))
+        return 1;
+    return 0;
+}
+
+int isPrintable(TREE *node)
+{
+    if (!node) return 0;
+    if (!node->son[0]) return 0;
+    if (node->son[0]->type == LIT_STRING || isExp(node->son[0]))
+        return 1;
+    return isPrintable(node->son[1]);
+}
 
 int isDiffParam(TREE *decl, TREE* call)
 {

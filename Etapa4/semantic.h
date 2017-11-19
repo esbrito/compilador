@@ -16,6 +16,8 @@ int isDatatypeInt(int type);
 int isDatatypeFloat(int type);
 int isInteger(TREE *node);
 int isFloat(TREE *node);
+int isPrintable(TREE *node);
+int isExp(TREE *node);
 int isConditional(int type);
 int isArithmetic(int type);
 int isLogic(int type);
