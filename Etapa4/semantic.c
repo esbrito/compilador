@@ -37,6 +37,24 @@ void semanticSetTypes(TREE *node)
             if (node->son[0]->type == TREE_KW_DOUBLE) { node->symbol->datatype = DATATYPE_DOUBLE; }
         }
     }
+    
+    if (node->type == TREE_PARAM)
+    {
+        if (node->symbol->type != TK_IDENTIFIER)
+        {
+            fprintf(stderr, "Semantic ERROR: identifier %s already declared. Line: %d \n", node->symbol->text, node->line);
+            found_semantic_err = 1; //set flag semantic err
+        }
+        else
+        {
+            node->symbol->type = SYMBOL_VAR;
+            if (node->son[0]->type == TREE_KW_BYTE) { node->symbol->datatype = DATATYPE_BYTE; }
+            if (node->son[0]->type == TREE_KW_SHORT) { node->symbol->datatype = DATATYPE_SHORT; }
+            if (node->son[0]->type == TREE_KW_LONG) { node->symbol->datatype = DATATYPE_LONG; }
+            if (node->son[0]->type == TREE_KW_FLOAT) { node->symbol->datatype = DATATYPE_FLOAT; }
+            if (node->son[0]->type == TREE_KW_DOUBLE) { node->symbol->datatype = DATATYPE_DOUBLE; }
+        }
+    }
 
     if (node->type == TREE_DECLARATION_VECTOR)
     {
