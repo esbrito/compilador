@@ -15,9 +15,11 @@ void semanticSetTypes(TREE *node)
     if (node->type == TREE_SYMBOL)
     {
         if (node->symbol->type == LIT_INTEGER)
-            node->symbol->datatype = DATATYPE_SHORT;
+            node->symbol->datatype = DATATYPE_LONG;
         if (node->symbol->type == LIT_REAL)
-            node->symbol->datatype = DATATYPE_FLOAT;
+            node->symbol->datatype = DATATYPE_DOUBLE;
+        if (node->symbol->type == LIT_CHAR)
+            node->symbol->datatype = DATATYPE_BYTE;
     }
 
     if (node->type == TREE_DECLARATION_SCALAR)
@@ -246,6 +248,38 @@ void semanticCheckOperands(TREE *node)
         }
     }
 
+    // check declaration datatype consistency
+    if (node->type == TREE_DECLARATION_SCALAR)
+    {
+        if (isDatatypeInt(node->symbol->datatype) && !isDatatypeInt(node->son[1]->symbol->datatype))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-integer value to a integer variable. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+        
+        if (isDatatypeFloat(node->symbol->datatype) && !isDatatypeFloat(node->son[1]->symbol->datatype))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+
+    // check declaration datatype consistency
+    if (node->type == TREE_DECLARATION_VECTOR)
+    {
+        if (isDatatypeInt(node->symbol->datatype) && !isVecDeclarationInt(node->son[2]))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-integer value to a integer vector. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+        
+        if (isDatatypeFloat(node->symbol->datatype) && !isVecDeclarationFloat(node->son[2]))
+        {
+            fprintf(stderr, "Semantic ERROR: assigning non-float value to a integer vector. Line %d\n", node->line);
+            found_semantic_err = 1;
+        }
+    }
+
     // check assign datatype consistency
     if (node->type == TREE_ASSIGN)
     {
@@ -329,6 +363,22 @@ void semanticCheckOperands(TREE *node)
 }
 
 /* AUX FUNCTIONS */
+
+int isVecDeclarationInt(TREE *init_list)
+{
+    if (!init_list) return 1;
+    if (init_list->son[0] == 0) return 1;
+    if (!isDatatypeInt(init_list->son[0]->symbol->datatype)) return 0;
+    return isVecDeclarationInt(init_list->son[1]);
+}
+
+int isVecDeclarationFloat(TREE *init_list)
+{
+    if (!init_list) return 1;
+    if (init_list->son[0] == 0) return 1;
+    if (!isDatatypeFloat(init_list->son[0]->symbol->datatype)) return 0;
+    return isVecDeclarationFloat(init_list->son[1]);
+}
 
 int isExp(TREE *node)
 {

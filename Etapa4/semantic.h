@@ -23,6 +23,8 @@ int isArithmetic(int type);
 int isLogic(int type);
 int countSons(TREE *node);
 int isDiffParam(TREE *decl, TREE *call);
+int isVecDeclarationInt(TREE*);
+int isVecDeclarationFloat(TREE*);
 
 /* FUNCTION ARGS LINKED LIST */
 struct fun_node {
