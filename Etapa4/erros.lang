@@ -21,7 +21,7 @@ varc: byte = 'c';
     var = 5;
     var = c;
     var = vec[0];
-    var = f();
+    var = f(1.0); //erro (datatype incorreto)
     var = vec; //erro
     var = f; //erro
 
@@ -32,7 +32,7 @@ varc: byte = 'c';
     f = vec; //erro
     f = 5; //erro
     f = var; //erro
-    b = 3; //erro (nao declarado)
+    asd = 3; //erro (nao declarado)
 
 
     vec[1] = var;
@@ -51,9 +51,9 @@ varc: byte = 'c';
     //TODO - DECIDIR SE ISSO DEVE PASSAR OU NAO
     var = 'c';
     varb = 'c';
-    varf = 'c';
+    varf = 'c'; //erro
     vard = 'c'; //erro
-    varl = 'c'; //erro
+    varl = 'c'; 
     vec[1] = 'c';
 
 
@@ -101,14 +101,14 @@ varc: byte = 'c';
     varl = vec[varf]; //erro
     varl = vec[varf + var]; //erro
     
-    varl = f() + r(); //erro (pois r retorna double, logo atribui double em long)
+    varl = f(1) + r(); //erro (pois r retorna double, logo atribui double em long)
 
-    varl = f() + g(); 
+    varl = f(1) + g(); 
   }
 
 (short) f(b: byte)
 {
-    return (varf);
+    return (varf); //error
 }
 
 (short) f2(x: long, n: long, a: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
@@ -116,9 +116,9 @@ varc: byte = 'c';
     return (0);    
 }
 
-(float) f3(k: long, h: long, o: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
+(double) f3(k: long, h: long, o: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
 {
-    return (0);    
+    return (0.0);    
 }
 
 (short) g() //error (sem return) // TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO
@@ -132,10 +132,36 @@ varc: byte = 'c';
 
 }
 
+(float) float_return()
+{
+   return (1.0);
+   return (2.0);
+   return (5); //erro
+   {
+       return(3); //erro
+   };
+
+   if ( c > 1) then 
+   { 
+       return (3)    
+   }
+   else 
+   {
+       return (4)
+   };
+    {
+           return (4); //erro
+    }
+  
+}
+
+
 (short) double_return()
 {
    return (1);
+   return (1.0);
    return (2);
+   return (1.0);
 }
 
 (short) t() //erro (retorna tipo errado)
@@ -165,7 +191,7 @@ varc: byte = 'c';
 
 (short) i()  //erro (retorna tipo errado) 
 {
-    return (vec[var]); 
+    return (vecd[var]); 
 }
 
 (double) r()

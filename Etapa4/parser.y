@@ -95,8 +95,8 @@
 	cmd:
 	TK_IDENTIFIER '=' exp {$$ = tree_create(TREE_ASSIGN, $1, $3 ,0 ,0 ,0); $$->line = getLineNumber();$$->line = getLineNumber();}|
 	TK_IDENTIFIER '[' exp ']' '=' exp {$$ = tree_create(TREE_ASSIGN_VECTOR, $1, tree_create(TREE_VECTOR_VALUES_POSITION, 0, $3 ,0 ,0 ,0) ,$6 ,0 ,0);$$->line = getLineNumber();}|
-	KW_IF '(' exp ')' KW_THEN cmd else {$$ = tree_create(TREE_IF, 0, $3 ,$6 ,$7 ,0);$$->line = getLineNumber();}|
-	KW_WHILE '(' exp ')' cmd {$$ = tree_create(TREE_WHILE, 0, $3 ,$5 ,0 ,0);$$->line = getLineNumber();}|
+	KW_IF '(' exp ')' KW_THEN cmd else {$$ = tree_create(TREE_IF, 0, $3 ,$6 ,$7 ,0);$$->line = $3->line;}|
+	KW_WHILE '(' exp ')' cmd {$$ = tree_create(TREE_WHILE, 0, $3 ,$5 ,0 ,0);$$->line = $3->line;}|
 	KW_PRINT printables {$$ = tree_create(TREE_PRINT, 0, $2 ,0 ,0 ,0);$$->line = getLineNumber();}|
 	KW_READ '>' TK_IDENTIFIER {$$ = tree_create(TREE_READ, $3, 0 ,0 ,0 ,0);$$->line = getLineNumber();}|
 	KW_RETURN exp {$$ = tree_create(TREE_RETURN, 0, $2 ,0 ,0 ,0);$$->line = getLineNumber();}| 

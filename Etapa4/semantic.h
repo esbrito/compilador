@@ -11,7 +11,7 @@ void semanticCheckUsage(TREE *node);
 void semanticCheckOperands(TREE *node);
 
 /* AUXILIAR FUNC */
-TREE *findReturn(TREE *node);
+int findReturnAndCheck(TREE *node, int datatype);
 int isDatatypeInt(int type);
 int isDatatypeFloat(int type);
 int isInteger(TREE *node);

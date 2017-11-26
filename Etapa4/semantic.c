@@ -21,6 +21,25 @@ void semanticSetTypes(TREE *node)
         if (node->symbol->type == LIT_CHAR)
             node->symbol->datatype = DATATYPE_BYTE;
     }
+    if (node->type == TREE_DECLARATION_SYMBOL)
+    {
+        if (node->symbol->type == LIT_INTEGER)
+            node->symbol->datatype = DATATYPE_LONG;
+        if (node->symbol->type == LIT_REAL)
+            node->symbol->datatype = DATATYPE_DOUBLE;
+        if (node->symbol->type == LIT_CHAR)
+            node->symbol->datatype = DATATYPE_BYTE;
+    }
+
+    if (node->type == TREE_DECLARATION_SYMBOL_VECTOR)
+    {
+        if (node->symbol->type == LIT_INTEGER)
+            node->symbol->datatype = DATATYPE_LONG;
+        if (node->symbol->type == LIT_REAL)
+            node->symbol->datatype = DATATYPE_DOUBLE;
+        if (node->symbol->type == LIT_CHAR)
+            node->symbol->datatype = DATATYPE_BYTE;
+    }
 
     if (node->type == TREE_DECLARATION_SCALAR)
     {
@@ -259,7 +278,7 @@ void semanticCheckOperands(TREE *node)
         
         if (isDatatypeFloat(node->symbol->datatype) && !isDatatypeFloat(node->son[1]->symbol->datatype))
         {
-            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: assigning non-real value to a real variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
@@ -275,13 +294,13 @@ void semanticCheckOperands(TREE *node)
         
         if (isDatatypeFloat(node->symbol->datatype) && !isVecDeclarationFloat(node->son[2]))
         {
-            fprintf(stderr, "Semantic ERROR: assigning non-float value to a integer vector. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: assigning non-real value to a integer vector. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
 
     // check assign datatype consistency
-    if (node->type == TREE_ASSIGN)
+    if (node->type == TREE_ASSIGN) 
     {
         if (isDatatypeInt(node->symbol->datatype) && !isInteger(node->son[0]))
         {
@@ -291,7 +310,7 @@ void semanticCheckOperands(TREE *node)
         
         if (isDatatypeFloat(node->symbol->datatype) && !isFloat(node->son[0]))
         {
-            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: assigning non-real value to a real variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
@@ -307,7 +326,7 @@ void semanticCheckOperands(TREE *node)
         
         if (isDatatypeFloat(node->symbol->datatype) && !isFloat(node->son[1]))
         {
-            fprintf(stderr, "Semantic ERROR: assigning non-float value to a float variable. Line %d\n", node->line);
+            fprintf(stderr, "Semantic ERROR: assigning non-real value to a real variable. Line %d\n", node->line);
             found_semantic_err = 1;
         }
     }
@@ -316,22 +335,8 @@ void semanticCheckOperands(TREE *node)
     // check function return type
     if (node->type == TREE_FUNCTION)
     {
-        TREE *ret;
-        if ((ret = findReturn(node->son[2])) != 0)
-        {
-            if (isDatatypeInt(node->symbol->datatype) && !isInteger(ret->son[0]))
-            {
-                fprintf(stderr, "Semantic ERROR: expects return type Integer. Line %d\n", node->line);
-                found_semantic_err = 1;
-            }
-
-            if (isDatatypeFloat(node->symbol->datatype) && !isFloat(ret->son[0]))
-            {
-                fprintf(stderr, "Semantic ERROR: expects return type Float. Line %d\n", node->line);
-                found_semantic_err = 1;
-            }
-        }
-        else
+        //Search for returns, and checktypes, if no return -> error
+        if ((findReturnAndCheck(node->son[2], node->symbol->datatype) == 0))
         {
             fprintf(stderr, "Semantic ERROR: function is missing a return type. Line %d\n", node->line);
             found_semantic_err = 1;
@@ -418,15 +423,37 @@ int isDiffParam(TREE *decl, TREE* call)
     return isDiffParam(decl->son[1], call->son[1]);
 }
 
-TREE *findReturn(TREE *node)
+int findReturnAndCheck(TREE *node, int datatype)
 {
     // process a block until finds a return cmd
     if (!node) return 0;
     if (!node->son[0]) return 0;
     if (node->son[0]->type == TREE_RETURN)
-        return node->son[0]->son[0];
-    
-    return findReturn(node->son[1]);
+    {
+          if (isDatatypeInt(datatype) && !isInteger(node->son[0]->son[0]->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: expects return type Integer. Line %d\n", node->son[0]->line);
+                found_semantic_err = 1;
+                return 1+findReturnAndCheck(node->son[1], datatype);
+            }
+            else if (isDatatypeFloat(datatype) && !isFloat(node->son[0]->son[0]->son[0]))
+            {
+                fprintf(stderr, "Semantic ERROR: expects return type Real. Line %d\n", node->son[0]->line);
+                found_semantic_err = 1;
+                return 1+findReturnAndCheck(node->son[1], datatype);
+            }
+            else return 1+findReturnAndCheck(node->son[1], datatype);
+    }
+    if(node->son[0]->type == TREE_IF || node->son[0]->type == TREE_WHILE)
+    {
+    return findReturnAndCheck(node->son[0], datatype) + findReturnAndCheck(node->son[1], datatype);
+    }
+    if(node->son[0]->type == TREE_CMD_BLOCK)
+    {
+    return findReturnAndCheck(node->son[0], datatype) + findReturnAndCheck(node->son[1], datatype);
+    }
+
+    return findReturnAndCheck(node->son[1], datatype);
 }
 
 int isDatatypeInt(int type)
@@ -484,7 +511,7 @@ int isInteger(TREE *node)
 
     // test for parenthesis
     if (node->type == TREE_PAR)
-        isInteger(node->son[0]);
+        return isInteger(node->son[0]);
 
     return 0;
 }
@@ -526,7 +553,7 @@ int isFloat(TREE *node)
     
     // test for parenthesis
     if (node->type == TREE_PAR)
-        isFloat(node->son[0]);
+        return isFloat(node->son[0]);
 
     return 0; 
 }

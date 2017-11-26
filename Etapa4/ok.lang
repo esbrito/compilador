@@ -7,13 +7,16 @@ d: float = 0.0;
 
 (long) main()
   {
-    if (a-5) then { };
+    if (a>5) then { };
     a = my_func();   
     a = 5;
     a = 10*(2+3);
 	b = ((1-2)*a)/3;
-	c = a/(a-b);
+	c = a/(a-b)*d;
 	d = a/(b+c);
+  return (0);
+
+  return (5)
   }
 
 (short) my_func()
