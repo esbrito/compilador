@@ -12,6 +12,7 @@
 #define TAC_JZ 7
 #define TAC_LABEL 8
 #define TAC_INPUT 9
+#define TAC_VECREAD 10
 
 typedef struct tac
 {
