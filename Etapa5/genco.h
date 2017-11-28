@@ -23,6 +23,7 @@
 #define TAC_NE 17
 #define TAC_AND 18
 #define TAC_OR 19
+#define TAC_VECWRITE 20
 
 typedef struct tac
 {
