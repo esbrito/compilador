@@ -62,6 +62,7 @@ void tac_print_single(TAC* tac)
     case TAC_AND: fprintf(stderr, "TAC_AND" ); break;
     case TAC_OR: fprintf(stderr, "TAC_OR" ); break;
     case TAC_VECWRITE: fprintf(stderr, "TAC_VECWRITE" ); break;
+    case TAC_OUTPUT: fprintf(stderr, "TAC_OUTPUT" ); break;
 
     default:  fprintf(stderr, "UNKOWN" ); break;
   }
@@ -92,6 +93,7 @@ TAC* tac_generator(TREE* node)
     case TREE_SUB: return tac_join(tac_join(code[0], code[1]), tac_create(TAC_SUB,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_ASSIGN: return tac_join(code[0],tac_create(TAC_ASS,  node->symbol ,code[0]?code[0]->res:0,0)); break;
     case TREE_READ: return tac_join(code[0],tac_create(TAC_INPUT,  node->symbol ,code[0]?code[0]->res:0,0)); break;
+    case TREE_PRINTABLE: return tac_join(tac_create(TAC_OUTPUT,  code[0]?code[0]->res:0 , 0,0),tac_join(code[0], code[1])); break;
     case TREE_VECTOR: return tac_join(code[0],tac_create(TAC_VECREAD,   make_temp() ,node->symbol,code[0]?code[0]->res:0)); break;
     case TREE_ASSIGN_VECTOR: return tac_join(tac_join(code[0], code[1]),tac_create(TAC_VECWRITE,   code[1]?code[1]->res:0, node->symbol, code[0]?code[0]->res:0)); break;
     case TREE_IF: return make_if_then(code[0],code[1]); break;

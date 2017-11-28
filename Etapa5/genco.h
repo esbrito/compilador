@@ -24,6 +24,7 @@
 #define TAC_AND 18
 #define TAC_OR 19
 #define TAC_VECWRITE 20
+#define TAC_OUTPUT 21
 
 typedef struct tac
 {
