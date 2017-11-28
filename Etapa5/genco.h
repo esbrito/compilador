@@ -6,10 +6,11 @@
 #define TAC_SYMBOL 1
 #define TAC_ADD 2
 #define TAC_MUL 3
-#define TAC_SUB 4
-#define TAC_ASS 5
-#define TAC_JZ 6
-#define TAC_LABEL 7
+#define TAC_DIV 4
+#define TAC_SUB 5
+#define TAC_ASS 6
+#define TAC_JZ 7
+#define TAC_LABEL 8
 
 typedef struct tac
 {

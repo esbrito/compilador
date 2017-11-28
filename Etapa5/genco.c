@@ -46,6 +46,7 @@ void tac_print_single(TAC* tac)
     case TAC_ADD: fprintf(stderr, "TAC_ADD" ); break;
     case TAC_MUL: fprintf(stderr, "TAC_MUL" ); break;
     case TAC_SUB: fprintf(stderr, "TAC_SUB" ); break;
+    case TAC_DIV: fprintf(stderr, "TAC_DIV" ); break;
     case TAC_ASS: fprintf(stderr, "TAC_ASS" ); break;
     case TAC_LABEL: fprintf(stderr, "TAC_LABEL" ); break;
     case TAC_JZ: fprintf(stderr, "TAC_JZ" ); break;
@@ -73,6 +74,9 @@ TAC* tac_generator(TREE* node)
   switch (node->type) {
     case TREE_SYMBOL: return tac_create(TAC_SYMBOL, node->symbol,0,0); break;
     case TREE_ADD: return tac_join(tac_join(code[0], code[1]), tac_create(TAC_ADD,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_MUL: return tac_join(tac_join(code[0], code[1]), tac_create(TAC_MUL,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_DIV: return tac_join(tac_join(code[0], code[1]), tac_create(TAC_DIV,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_SUB: return tac_join(tac_join(code[0], code[1]), tac_create(TAC_SUB,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_ASSIGN: return tac_join(code[0],tac_create(TAC_ASS,  node->symbol ,code[0]?code[0]->res:0,0)); break;
     case TREE_IF: return make_if_then(code[0],code[1]); break;
   }
