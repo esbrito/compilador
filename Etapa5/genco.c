@@ -52,6 +52,16 @@ void tac_print_single(TAC* tac)
     case TAC_INPUT: fprintf(stderr, "TAC_INPUT" ); break;
     case TAC_VECREAD: fprintf(stderr, "TAC_VECREAD" ); break;
     case TAC_JZ: fprintf(stderr, "TAC_JZ" ); break;
+    case TAC_LESS: fprintf(stderr, "TAC_LESS" ); break;
+    case TAC_GREATER: fprintf(stderr, "TAC_GREATER" ); break;
+    case TAC_NOT: fprintf(stderr, "TAC_NOT" ); break;
+    case TAC_LE: fprintf(stderr, "TAC_LE" ); break;
+    case TAC_GE: fprintf(stderr, "TAC_GE" ); break;
+    case TAC_EQ: fprintf(stderr, "TAC_EQ" ); break;
+    case TAC_NE: fprintf(stderr, "TAC_NE" ); break;
+    case TAC_AND: fprintf(stderr, "TAC_AND" ); break;
+    case TAC_OR: fprintf(stderr, "TAC_OR" ); break;
+
     default:  fprintf(stderr, "UNKOWN" ); break;
   }
 
@@ -83,6 +93,15 @@ TAC* tac_generator(TREE* node)
     case TREE_READ: return tac_join(code[0],tac_create(TAC_INPUT,  node->symbol ,code[0]?code[0]->res:0,0)); break;
     case TREE_VECTOR: return tac_join(code[0],tac_create(TAC_VECREAD,   make_temp() ,node->symbol,code[0]?code[0]->res:0)); break;
     case TREE_IF: return make_if_then(code[0],code[1]); break;
+    case TREE_LESS : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_LESS,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_GREATER : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_GREATER,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_NOT : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_NOT,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_LE : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_LE,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_GE : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_GE,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_EQ : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_EQ,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_NE : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_NE,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_AND : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_AND,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
+    case TREE_OR : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_OR,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
   }
   return tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3]);
 }

@@ -1,5 +1,6 @@
 #ifndef GENCO_HEADER
 #define GENCO_HEADER
+
 #include "hash.h"
 #include "tree.h"
 
@@ -13,6 +14,15 @@
 #define TAC_LABEL 8
 #define TAC_INPUT 9
 #define TAC_VECREAD 10
+#define TAC_LESS 11
+#define TAC_GREATER 12
+#define TAC_NOT 13
+#define TAC_LE 14
+#define TAC_GE 15
+#define TAC_EQ 16
+#define TAC_NE 17
+#define TAC_AND 18
+#define TAC_OR 19
 
 typedef struct tac
 {

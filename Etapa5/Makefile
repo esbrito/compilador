@@ -9,7 +9,7 @@
 #
 
 etapa4: y.tab.o lex.yy.o hash.o tree.o semantic.o  genco.o
-	gcc -o etapa4 lex.yy.o hash.o tree.o semantic.o y.tab.o genco.o
+	gcc -o etapa5 lex.yy.o hash.o tree.o semantic.o y.tab.o genco.o
 
 genco.o: genco.c
 	gcc -c genco.c
@@ -36,4 +36,4 @@ y.tab.c: parser.y
 	yacc -d parser.y
 
 clean:
-	rm *.o lex.yy.c y.* etapa4
+	rm *.o lex.yy.c y.* etapa5
