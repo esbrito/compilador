@@ -1,0 +1,200 @@
+// UFRGS - Compiladores - Marcelo Johann - 2017/2
+
+var: short = 0;
+var: short = 0; //erro (redeclarado)
+vec: long[10];
+vecs: short[10];
+vecd: double[3] 0 0 0; //erro
+vecl: long[3] 0 0 0;
+
+c: short = 0;
+varb: byte = 0;
+varl: long = 0;
+varf: float = 0.0;
+varf2: float = 0; //erro
+vard: double = 0.0;
+varc: byte = 'c';
+
+
+(long) main()
+  {
+    var = 5;
+    var = c;
+    var = vec[0];
+    var = f(1.0); //erro (datatype incorreto)
+    var = vec; //erro
+    var = f; //erro
+
+
+    vec = 5; //erro
+    vec = f; //erro
+    vec = var; //erro
+    f = vec; //erro
+    f = 5; //erro
+    f = var; //erro
+    asd = 3; //erro (nao declarado)
+
+
+    vec[1] = var;
+    vec[1] = 5;
+    vec[1] = f();
+    vec[1] = f; //erro
+    vec[1] = vec; //erro
+    f[1] = var; //erro (f nao eh vetor)
+    var[1] = var; //erro (var nao eh vetor)
+    var[1] = 5; //erro  (var nao eh vetor)
+    vec[varf] = 5; //erro 
+    var[varf] = 5; //erro
+    var[vaf] = 5; //erro
+    var[3.14] = 5; //erro
+
+    //TODO - DECIDIR SE ISSO DEVE PASSAR OU NAO
+    var = 'c';
+    varb = 'c';
+    varf = 'c'; //erro
+    vard = 'c'; //erro
+    varl = 'c'; 
+    vec[1] = 'c';
+
+
+    var = 5.5; //erro
+    var = varb;
+    var = varl;
+    var = varf; //erro
+    var = vard; //erro
+    var = varb + varl; 
+    var = varb + varl + varf; //erro
+    varb = var + varl + varf; //erro
+    varf = var + varl + varf; 
+    varf = var; //erro
+    varf = var + vard;
+
+    var = (var > 3); //erro (é logico, nao deveria passar) 
+
+    var = f2(1,2, 3);
+    vecs = f2(1,2, 3);
+    varb = f3(1,2, 3); //erro (tipo invalido)  
+    vec[1] = f3(1,2, 3); //erro (tipo invalido) 
+    varb = f3(1,2, 3); //erro (tipo invalido) 
+    var = f2(1,2); //erro (poucos argumentos)
+    var = f2(1,2,4,5); //erro (muitos argumentos)
+
+    var = f2(1,2, f()); //erro (retorno de f não é byte)
+    var = f2(1,2, 2 > 5); // erro (condicional) 
+    
+    var = f(var);
+    var = f2(var, var, var);
+    var = f(varf); //erro
+    var = f2(var, varf, vard); //erro
+
+
+    print "Incrementado algumas vezes fica ",var,varb,"\n";
+    print 'c';
+
+    varl = vec[var];
+    varl = vec[varl];
+    varl = vec[varb];
+    varl = vec[varb + var];
+    varl = vec[f(1)];
+    varl = vec[r()]; //erro (função r retorna um float) 
+    varl = vec[vard]; //erro
+    varl = vec[varf]; //erro
+    varl = vec[varf + var]; //erro
+    
+    varl = f(1) + r(); //erro (pois r retorna double, logo atribui double em long)
+
+    varl = f(1) + g(); 
+  }
+
+(short) f(b: byte)
+{
+    return (varf); //error
+}
+
+(short) f2(x: long, n: long, a: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
+{
+    return (0);    
+}
+
+(double) f3(k: long, h: long, o: byte) //  TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO( diz que nao ta declarado, deveriam ser globais?)
+{
+    return (0.0);    
+}
+
+(short) g() //error (sem return) // TODO -> NAO ESTA BEM CLARO SE É ERRO OU NAO
+{
+
+
+
+
+
+
+
+}
+
+(float) float_return()
+{
+   return (1.0);
+   return (2.0);
+   return (5); //erro
+   {
+       return(3); //erro
+   };
+
+   if ( c > 1) then 
+   { 
+       return (3)    
+   }
+   else 
+   {
+       return (4)
+   };
+    {
+           return (4); //erro
+    }
+  
+}
+
+
+(short) double_return()
+{
+   return (1);
+   return (1.0);
+   return (2);
+   return (1.0);
+}
+
+(short) t() //erro (retorna tipo errado)
+{
+    return (1.0);    
+}
+
+(short) u() //erro (retorna tipo errado) 
+{
+    return (varf);    
+}
+
+(double) q() //erro (retorna tipo errado) 
+{
+    return (varb);    
+}
+
+(short) s() 
+{
+    return (vec);    //erro (identifier vec must be a scalar)
+}
+
+(long) z() 
+{
+    return (vec[var]);    
+}
+
+(short) i()  //erro (retorna tipo errado) 
+{
+    return (vecd[var]); 
+}
+
+(double) r()
+{
+    return (0.0);
+}
