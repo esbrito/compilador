@@ -5,7 +5,7 @@ a: short = 0;
 
 (long) main()
   {
-    a = a + 1;
+    read > a;
     if(a == 0) then
     {
     a = (1 + 5 * a) / (8 + 8 - 4);
