@@ -66,7 +66,9 @@ void tac_print_single(TAC* tac)
     case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN" ); break;
     case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN" ); break;
     case TAC_JMP: fprintf(stderr, "TAC_JMP" ); break;
-
+    case TAC_FUNCALL: fprintf(stderr, "TAC_FUNCALL" ); break;
+    case TAC_ARG: fprintf(stderr, "TAC_ARG" ); break;
+    case TAC_RETURN: fprintf(stderr, "TAC_RETURN" ); break;
     
     default:  fprintf(stderr, "UNKOWN" ); break;
   }
@@ -112,7 +114,10 @@ TAC* tac_generator(TREE* node)
     case TREE_OR : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_OR,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_FUNCTION : return tac_join(tac_join((tac_create(TAC_BEGINFUN, node->symbol , 0 , 0)),tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3])), tac_create(TAC_ENDFUN, node->symbol , 0 , 0)); break;
     case TREE_WHILE: return make_while(code[0],code[1]); break;
-
+    case TREE_PARAMS: return tac_join(tac_join(tac_create(TAC_ARG, 0,0,0), code[0]), code[1]); break;
+    case TREE_FUNCTION_CALL: return tac_join(tac_create(TAC_FUNCALL, make_temp(), node->symbol, 0), code[0]); break;
+    case TREE_RETURN: return tac_create(TAC_RETURN, code[0]?code[0]->res:0, 0, 0);
+                     
   }
   return tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3]);
 }
@@ -165,4 +170,3 @@ TAC* make_while(TAC* code0, TAC* code1)
 
   return tac_join(tac_join(tac_join(tac_join(tac_join(new_label_tac, code0), new_jump_zero_tac), code1), new_jump_tac),new_label_tac2);
 }
-
