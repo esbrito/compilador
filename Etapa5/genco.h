@@ -44,7 +44,7 @@ TAC* tac_generator(TREE* node);
 TAC* tac_join(TAC* l1, TAC* l2);
 void tac_print_back(TAC* tac);
 void tac_print_single(TAC* tac);
-TAC* make_if_then(TAC* code0, TAC* code1);
+TAC* make_if_then_else(TAC* code0, TAC* code1, TAC* code2);
 TAC* make_while(TAC* code0, TAC* code1);
 
 

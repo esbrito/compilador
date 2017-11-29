@@ -100,7 +100,7 @@ TAC* tac_generator(TREE* node)
     case TREE_PRINTABLE: return tac_join(tac_create(TAC_OUTPUT,  code[0]?code[0]->res:0 , 0,0),tac_join(code[0], code[1])); break;
     case TREE_VECTOR: return tac_join(code[0],tac_create(TAC_VECREAD,   make_temp() ,node->symbol,code[0]?code[0]->res:0)); break;
     case TREE_ASSIGN_VECTOR: return tac_join(tac_join(code[0], code[1]),tac_create(TAC_VECWRITE,   code[1]?code[1]->res:0, node->symbol, code[0]?code[0]->res:0)); break;
-    case TREE_IF: return make_if_then(code[0],code[1]); break;
+    case TREE_IF: return make_if_then_else(code[0],code[1], code[2]); break;
     case TREE_LESS : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_LESS,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_GREATER : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_GREATER,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_NOT : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_NOT,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
@@ -117,17 +117,29 @@ TAC* tac_generator(TREE* node)
   return tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3]);
 }
 
-TAC* make_if_then(TAC* code0, TAC* code1)
+TAC* make_if_then_else(TAC* code0, TAC* code1, TAC* code2)
 {
+  TAC *new_jump_zero_tac = 0;
+  TAC *new_label_jz_tac = 0;
+  HASH_NODE* new_label_jz = 0;
   TAC *new_jump_tac = 0;
-  TAC *new_label_tac = 0;
-  HASH_NODE* new_label = 0;
+  TAC *new_label_jmp_tac = 0;
+  HASH_NODE* new_label_jmp = 0;
 
-  new_label = make_label();
+  new_label_jz = make_label();
+  new_label_jmp = make_label();
 
-  new_jump_tac = tac_create(TAC_JZ, new_label, code0?code0->res:0, 0);
-  new_label_tac = tac_create(TAC_LABEL,new_label, 0, 0);
-  return tac_join(tac_join(tac_join(code0, new_jump_tac), code1), new_label_tac);
+  new_jump_zero_tac = tac_create(TAC_JZ, new_label_jz, code0?code0->res:0, 0);
+  new_jump_tac = tac_create(TAC_JMP, new_label_jmp, code0?code0->res:0, 0);
+  
+  new_label_jz_tac = tac_create(TAC_LABEL,new_label_jz, 0, 0);
+  new_label_jmp_tac = tac_create(TAC_LABEL,new_label_jmp, 0, 0);
+  
+  // check for else
+  if (!code2) // else is null
+    return tac_join(tac_join(tac_join(code0, new_jump_zero_tac), code1), new_label_jz_tac);
+  else // else is valid
+    return tac_join(tac_join(tac_join(tac_join(tac_join(tac_join(code0, new_jump_zero_tac), code1), new_jump_tac), new_label_jz_tac), code2), new_label_jmp_tac);
 }
 
 TAC* make_while(TAC* code0, TAC* code1)
