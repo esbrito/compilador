@@ -20,6 +20,10 @@ v: long[10];
 
   (long) aux()
   {
-    a = 8*7;
+    while(a>0)
+    {
+      a = a + 1;
+    };
+    print "overflow";
     return (0);
   }

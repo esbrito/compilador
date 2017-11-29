@@ -27,6 +27,7 @@
 #define TAC_OUTPUT 21
 #define TAC_BEGINFUN 22
 #define TAC_ENDFUN 23
+#define TAC_JMP 24
 
 typedef struct tac
 {
@@ -44,6 +45,7 @@ TAC* tac_join(TAC* l1, TAC* l2);
 void tac_print_back(TAC* tac);
 void tac_print_single(TAC* tac);
 TAC* make_if_then(TAC* code0, TAC* code1);
+TAC* make_while(TAC* code0, TAC* code1);
 
 
 #endif

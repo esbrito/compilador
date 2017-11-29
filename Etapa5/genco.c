@@ -65,6 +65,8 @@ void tac_print_single(TAC* tac)
     case TAC_OUTPUT: fprintf(stderr, "TAC_OUTPUT" ); break;
     case TAC_BEGINFUN: fprintf(stderr, "TAC_BEGINFUN" ); break;
     case TAC_ENDFUN: fprintf(stderr, "TAC_ENDFUN" ); break;
+    case TAC_JMP: fprintf(stderr, "TAC_JMP" ); break;
+
     
     default:  fprintf(stderr, "UNKOWN" ); break;
   }
@@ -109,6 +111,7 @@ TAC* tac_generator(TREE* node)
     case TREE_AND : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_AND,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_OR : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_OR,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_FUNCTION : return tac_join(tac_join((tac_create(TAC_BEGINFUN, node->symbol , 0 , 0)),tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3])), tac_create(TAC_ENDFUN, node->symbol , 0 , 0)); break;
+    case TREE_WHILE: return make_while(code[0],code[1]); break;
 
   }
   return tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3]);
@@ -126,3 +129,28 @@ TAC* make_if_then(TAC* code0, TAC* code1)
   new_label_tac = tac_create(TAC_LABEL,new_label, 0, 0);
   return tac_join(tac_join(tac_join(code0, new_jump_tac), code1), new_label_tac);
 }
+
+TAC* make_while(TAC* code0, TAC* code1)
+{
+  TAC *new_jump_zero_tac = 0;
+  TAC *new_jump_tac = 0;
+  TAC *new_label_tac = 0;
+  TAC *new_label_tac2 = 0;
+  HASH_NODE* new_label = 0;
+  HASH_NODE* new_label2 = 0;
+
+  //Label to return if while is true
+  new_label = make_label();
+
+  //Label to jump if while is false
+  new_label2 = make_label();
+
+  new_jump_zero_tac = tac_create(TAC_JZ, new_label2, code0?code0->res:0, 0);
+  new_jump_tac = tac_create(TAC_JMP, new_label, 0, 0);
+
+  new_label_tac = tac_create(TAC_LABEL,new_label, 0, 0);
+  new_label_tac2 = tac_create(TAC_LABEL,new_label2, 0, 0);
+
+  return tac_join(tac_join(tac_join(tac_join(tac_join(new_label_tac, code0), new_jump_zero_tac), code1), new_jump_tac),new_label_tac2);
+}
+
