@@ -26,7 +26,7 @@ v: long[10];
     };
 
     b = aux();
-    b = aux2(3+2, 5+5);
+    b = aux2(a, 5+5);
 
     return (0);
   }
