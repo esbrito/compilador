@@ -26,13 +26,19 @@ TAC *tac_join(TAC *l1, TAC *l2)
     tac = tac->prev;
   }
   tac->prev = l1;
+  l1->next = tac;
   return l2;
 }
 
 void tac_print_back(TAC *last)
 {
   TAC *tac;
-  for (tac = last; tac; tac = tac->prev)
+  for (tac = last; tac->prev; tac = tac->prev)
+  {
+    //tac_print_single(tac);
+  }
+
+  for (; tac; tac = tac->next)
   {
     tac_print_single(tac);
   }
@@ -209,25 +215,14 @@ TAC *make_while(TAC *code0, TAC *code1)
   return tac_join(tac_join(tac_join(tac_join(tac_join(tac_join(tac_join(new_label_tac, code0), new_jump_zero_tac), new_jump_to_end_tac), new_label_while_true),code1),new_jump_to_begin),new_label_end);
 }
 
-TAC* reverse(TAC* tac)
+TAC* reverse(TAC* current)
 {
-     TAC* temp = NULL;  
-     TAC* current = tac;
-      
-     /* swap next and prev for all nodes of 
-       doubly linked list */
-     while (current !=  NULL)
-     {
-       temp = current->prev;
-       current->prev = current->next;
-       current->next = temp;              
-       current = current->prev;
-     }      
-      
-     /* Before changing head, check for the cases like empty 
-        list and list with only one node */
-     if(temp != NULL )
-        current = temp->prev;
-    return current;
-}     
- 
+	if(current == NULL)
+		return NULL;
+	TAC* temp = current;
+	while(temp->prev != NULL)
+	{
+		temp = temp->prev;
+	}
+	return temp;
+}
