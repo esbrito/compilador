@@ -28,6 +28,9 @@
 #define TAC_BEGINFUN 22
 #define TAC_ENDFUN 23
 #define TAC_JMP 24
+#define TAC_ARG 25
+#define TAC_FUNCALL 26
+#define TAC_RETURN 27
 
 typedef struct tac
 {
@@ -46,6 +49,7 @@ void tac_print_back(TAC* tac);
 void tac_print_single(TAC* tac);
 TAC* make_if_then_else(TAC* code0, TAC* code1, TAC* code2);
 TAC* make_while(TAC* code0, TAC* code1);
-
+TAC* make_funcall(TAC* params);
+TAC* reverse(TAC* tac);
 
 #endif

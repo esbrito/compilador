@@ -79,7 +79,7 @@
         semanticCheckUndeclared();
         semanticCheckUsage($1);
         semanticCheckOperands($1);
-				tac_print_back(tac_generator($1));
+		tac_print_back(reverse(tac_generator($1)));
     }
 	;
 
