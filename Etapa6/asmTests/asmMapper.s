@@ -13,7 +13,7 @@ op2: .long 333
 res: .long 0
 
 
-## TAC BEGIN PROGRAM
+## foreach SYMBOL_FUN
 	.globl	main
 	.type	main, @function
 

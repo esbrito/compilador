@@ -1,0 +1,7 @@
+hue: short = 666;
+
+(long) main()
+  {
+  print "hahaha";
+return (0);
+  }
