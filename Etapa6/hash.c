@@ -108,3 +108,8 @@ HASH_NODE* make_label(void)
   sprintf(nameBuffer, "___my___label___var__%d", serial_number++);
   return hash_insert(SYMBOL_LABEL, nameBuffer);
 }
+
+HASH_NODE** get_hash_table(void)
+{
+  return hash_table;
+}

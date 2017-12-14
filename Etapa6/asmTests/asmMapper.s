@@ -1,17 +1,17 @@
 
 ## DATA
-.section .rodata
 .data
 
-#for each string 
+#for each string
 stringVar:	.string	"teste"
 formatIntString:	.string "%d"
 
 ## for each variable (and literals as variables beginning with _) in hashtable
-var: .long	324 
-var2: .long	555 
+var: .long	324
+op1: .long 100
+op2: .long 333
+res: .long 0
 
- 
 
 ## TAC BEGIN PROGRAM
 	.globl	main
@@ -33,12 +33,17 @@ main:
 	call	printf
 
 ##TAC ASSIGN (assign variable, as mentioned literals will be variables)
-	movl	var2(%rip), %eax
-	movl	%eax, var(%rip)
+	movl	op1(%rip), %eax
+	movl	%eax, res(%rip)
 
+##TAC ADD
+  movl	op1(%rip), %eax
+  movl	op2(%rip), %edx
+  addl	%edx, %eax
+  movl	%eax, res(%rip)
 
 ##TAC PRINT VARIABLE
-	movl	var(%rip), %eax
+	movl	res(%rip), %eax
 	movl	%eax, %esi
 	movl	$formatIntString, %edi
 	movl	$0, %eax

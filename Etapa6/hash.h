@@ -34,5 +34,6 @@ void hashCheckUndeclared();
 void initMe();
 HASH_NODE* make_temp(void);
 HASH_NODE* make_label(void);
+HASH_NODE** get_hash_table(void);
 
 #endif /* hash_h */
