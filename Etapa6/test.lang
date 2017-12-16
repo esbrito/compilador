@@ -3,6 +3,6 @@ hue: short = 666;
 (long) main()
   {
   hue = 5;
-  print "hehehe", hue+3;
+  print (hue +3 + 595 + 77);
 return (0);
   }

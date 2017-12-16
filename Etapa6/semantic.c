@@ -397,6 +397,8 @@ int isPrintable(TREE *node)
 {
     if (!node) return 0;
     if (!node->son[0]) return 0;
+    if (node->son[0]->type == TREE_PAR)
+        return isPrintable(node->son[0]);
     if (node->son[0]->type == LIT_STRING || isExp(node->son[0]))
         return 1;
     return isPrintable(node->son[1]);

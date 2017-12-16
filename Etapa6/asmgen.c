@@ -45,22 +45,22 @@ void asm_generator(char *filename, TAC *code)
       //Nao sei se eh necessario o trecho ainda
       if (node->type == SYMBOL_VAR)
       {
-        fprintf(fout, "\n%s: .long	0 \n", node->text); //TODO Ta sempre declarando zerado!!
+        fprintf(fout, "\n_%s: .long	0 \n", node->text); //TODO Ta sempre declarando zerado!!
       }
 
 
       if (node->type == LIT_STRING)
       {
         //String " " from string to name the variable
-        fprintf(fout, "\n%s:	.string	%s \n", trimEdges(node->text), node->text);
+        fprintf(fout, "\n_%s:	.string	%s \n", trimEdges(node->text), node->text);
       }
 
       if (node->type == SYMBOL_FUN)
       {
         fprintf(fout, "\n##  SYMBOL_FUN \n"
                       ".globl	%s \n"
-                      ".type	main, @function\n",
-                node->text);
+                      ".type	%s, @function\n", 
+                node->text, node->text);  //TODO ver se esse type nao tem que ser só realmente no main
       }
 
         fprintf(stderr, "%s - %d\n", node->text, node->type);
@@ -76,12 +76,12 @@ void asm_generator(char *filename, TAC *code)
     {
     case TAC_ADD:
       fprintf(fout, "\n##TAC ADD\n"
-                    "movl	%s(%%rip), %%eax\n"
-                    "movl	%s(%%rip), %%edx\n"
+                    "movl	_%s(%%rip), %%eax\n"
+                    "movl	_%s(%%rip), %%edx\n"
                     "addl	%%edx, %%eax\n"
-                    "movl	%%eax, %s(%%rip)\n", tac->op1->text, tac->op2->text, tac->res->text);
+                    "movl	%%eax, _%s(%%rip)\n", tac->op1->text, tac->op2->text, tac->res->text);
       break;
-    case TAC_BEGINFUN:
+    case TAC_BEGINFUN: //Functions DONT start with _
       fprintf(fout,
               "\n##TAC BEGINFUN \n"
               "%s: \n"
@@ -105,7 +105,7 @@ void asm_generator(char *filename, TAC *code)
       if (tac->res->type == LIT_STRING)
       {
         fprintf(fout, "\n##TAC PRINT STRING\n"
-                      "	movl	$%s, %%edi\n"
+                      "	movl	$_%s, %%edi\n"
                       " movl	$0, %%eax\n"
                       " call	printf\n",
                 trimEdges(tac->res->text));
@@ -113,7 +113,7 @@ void asm_generator(char *filename, TAC *code)
       else if (tac->res->type == SYMBOL_VAR) //TODO Ver se é int por exemplo
       {
         fprintf(fout, "\n##TAC PRINT VARIABLE\n"
-                      "movl	%s(%%rip), %%eax\n"
+                      "movl	_%s(%%rip), %%eax\n"
                       "movl	%%eax, %%esi\n"
                       "movl	$formatIntString, %%edi\n"
                       "movl	$0, %%eax\n"
