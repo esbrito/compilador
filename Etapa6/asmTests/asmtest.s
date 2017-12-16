@@ -1,12 +1,11 @@
 	.file	"asmtest.c"
 	.globl	a
 	.data
-	.align 8
+	.align 4
 	.type	a, @object
-	.size	a, 8
+	.size	a, 4
 a:
-	.long	0
-	.long	1081360384
+	.long	324
 	.globl	b
 	.align 4
 	.type	b, @object
@@ -25,15 +24,14 @@ main:
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
 	movl	b(%rip), %eax
-	cvtsi2sd	%eax, %xmm0
-	movsd	a(%rip), %xmm1
-	addsd	%xmm1, %xmm0
-	movsd	%xmm0, a(%rip)
+	addl	$6, %eax
+	movl	%eax, a(%rip)
+	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret
 	.cfi_endproc
 .LFE0:
 	.size	main, .-main
-	.ident	"GCC: (Ubuntu 4.8.4-2ubuntu1~14.04.3) 4.8.4"
+	.ident	"GCC: (Ubuntu 5.4.0-6ubuntu1~16.04.5) 5.4.0 20160609"
 	.section	.note.GNU-stack,"",@progbits

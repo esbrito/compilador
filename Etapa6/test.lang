@@ -1,8 +1,10 @@
-hue: short = 666;
+hue: short = 0;
 
 (long) main()
   {
-  hue = 5;
-  print (hue +3 + 595 + 77);
+  print "iniciando_programa";
+  hue = 7;
+  print (hue);
+  print ((((hue +7) ) * 8 )- 1);
 return (0);
   }

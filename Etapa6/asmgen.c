@@ -28,7 +28,7 @@ void asm_generator(char *filename, TAC *code)
   fprintf(fout, "\n## DATA\n .data\n");
 
   //Fixed string formats
-  fprintf(fout, "\nformatIntString:	.string \"%%d\" \n");
+  fprintf(fout, "\nformatIntString:	.string \"%%d\\n\" \n");
   //TODO fprints every variable in hashtable
   HASH_NODE **hash_table = get_hash_table();
   HASH_NODE *node;
@@ -37,33 +37,32 @@ void asm_generator(char *filename, TAC *code)
   {
     for (node = hash_table[i]; node; node = node->next)
     {
+      //EVERY literal is a variable of the literal starting with _
       if (node->type == LIT_INTEGER || node->type == LIT_REAL)
       {
-        fprintf(fout, "\n_%s: .long	%s \n", node->text, node->text);
+        fprintf(fout, "\n_%s: .long	%s \n", node->text, node->text); //TODO suport string with spaces or special character like ...
       }
 
-      //Nao sei se eh necessario o trecho ainda
       if (node->type == SYMBOL_VAR)
       {
         fprintf(fout, "\n_%s: .long	0 \n", node->text); //TODO Ta sempre declarando zerado!!
       }
 
-
       if (node->type == LIT_STRING)
       {
         //String " " from string to name the variable
-        fprintf(fout, "\n_%s:	.string	%s \n", trimEdges(node->text), node->text);
+        fprintf(fout, "\n_%s:	.string	\"%s \\n\" \n", trimEdges(node->text), trimEdges(node->text));
       }
 
       if (node->type == SYMBOL_FUN)
       {
         fprintf(fout, "\n##  SYMBOL_FUN \n"
                       ".globl	%s \n"
-                      ".type	%s, @function\n", 
-                node->text, node->text);  //TODO ver se esse type nao tem que ser só realmente no main
+                      ".type	%s, @function\n",
+                node->text, node->text); //TODO ver se esse type nao tem que ser só realmente no main
       }
 
-        fprintf(stderr, "%s - %d\n", node->text, node->type);
+      fprintf(stderr, "%s - %d\n", node->text, node->type);
     }
   }
 
@@ -79,7 +78,32 @@ void asm_generator(char *filename, TAC *code)
                     "movl	_%s(%%rip), %%eax\n"
                     "movl	_%s(%%rip), %%edx\n"
                     "addl	%%edx, %%eax\n"
-                    "movl	%%eax, _%s(%%rip)\n", tac->op1->text, tac->op2->text, tac->res->text);
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->op2->text, tac->res->text);
+      break;
+    case TAC_DIV:
+      fprintf(fout, "\n##TAC DIV\n"
+                    "movl	_%s(%%rip), %%eax\n"
+                    "movl	_%s(%%rip), %%edx\n"
+                    "divl	%%edx, %%eax\n"
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->op2->text, tac->res->text);
+      break;
+    case TAC_MUL:
+      fprintf(fout, "\n##TAC MUL\n"
+                    "movl	_%s(%%rip), %%eax\n"
+                    "movl	_%s(%%rip), %%edx\n"
+                    "imull	%%edx, %%eax\n"
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->op2->text, tac->res->text);
+      break;
+    case TAC_SUB:
+      fprintf(fout, "\n##TAC SUB\n"
+                    "movl	_%s(%%rip), %%eax\n"
+                    "movl	_%s(%%rip), %%edx\n"
+                    "subl	%%edx, %%eax\n"
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->op2->text, tac->res->text);
       break;
     case TAC_BEGINFUN: //Functions DONT start with _
       fprintf(fout,
@@ -90,7 +114,8 @@ void asm_generator(char *filename, TAC *code)
               ".cfi_def_cfa_offset 16 \n"
               ".cfi_offset 6, -16 \n"
               "movq	%%rsp, %%rbp \n"
-              ".cfi_def_cfa_register 6 \n", tac->res->text);
+              ".cfi_def_cfa_register 6 \n",
+              tac->res->text);
       break;
     case TAC_ENDFUN:
       fprintf(fout,
@@ -121,8 +146,12 @@ void asm_generator(char *filename, TAC *code)
                 tac->res->text);
       }
       break;
+    case TAC_ASS:
+      fprintf(fout, "\n ##TAC ASSIGN \n"
+                    "movl	_%s(%%rip), %%eax\n"
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->res->text);
     }
   }
-
   fclose(fout);
 }
