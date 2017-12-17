@@ -1,10 +1,27 @@
 hue: short = 0;
+var: short = 0;
 
 (long) main()
   {
   print "iniciando_programa";
   hue = 7;
+  if(hue > 6) then {
   print (hue);
   print ((((hue +7) ) * 8 )- 1);
-return (0);
+
+  };
+  while(hue < 10)
+  {
+    hue = hue + 1;
+    print "Incrementando", (hue);
+    if (hue == 8 ) then {
+      print "Chegou_em_8"
+    };
+  };
+  print "insira_um_valor";
+  read > var;
+  print "valor_inserido";
+  print (var);
+  return (0);
+
   }

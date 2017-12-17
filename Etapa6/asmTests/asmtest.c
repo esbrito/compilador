@@ -2,6 +2,7 @@
 
 int a = 324;
 int b = 3;
+int c = 1;
 int main (){
-  a = ((((b +1) / 5) )- 1);
+  scanf("%d", &c);
 }

@@ -29,6 +29,7 @@ void asm_generator(char *filename, TAC *code)
 
   //Fixed string formats
   fprintf(fout, "\nformatIntString:	.string \"%%d\\n\" \n");
+  fprintf(fout, "\ninsertInt:	.string \"%%d\" \n");
   //TODO fprints every variable in hashtable
   HASH_NODE **hash_table = get_hash_table();
   HASH_NODE *node;
@@ -151,6 +152,93 @@ void asm_generator(char *filename, TAC *code)
                     "movl	_%s(%%rip), %%eax\n"
                     "movl	%%eax, _%s(%%rip)\n",
               tac->op1->text, tac->res->text);
+      break;
+    case TAC_GREATER:
+      fprintf(fout, "\n ##TAC GREATER \n"
+                    "movl	_%s(%%rip), %%edx \n"
+                    "movl	_%s(%%rip), %%eax \n"
+                    "cmpl	%%eax, %%edx\n",
+              tac->op1->text, tac->op2->text);
+      if (tac->next->type == TAC_JZ)
+      {
+        fprintf(fout, "\n ##TAC JZ \n"
+                      "jle	_%s \n",
+                tac->next->res->text);
+      }
+      break;
+
+    case TAC_LESS:
+      fprintf(fout, "\n ##TAC TAC_LESS \n"
+                    "movl	_%s(%%rip), %%edx \n"
+                    "movl	_%s(%%rip), %%eax \n"
+                    "cmpl	%%eax, %%edx\n",
+              tac->op1->text, tac->op2->text);
+      if (tac->next->type == TAC_JZ)
+      {
+        fprintf(fout, "\n ##TAC JZ \n"
+                      "jge	_%s \n",
+                tac->next->res->text);
+      }
+      break;
+    case TAC_GE:
+      fprintf(fout, "\n ##TAC TAC_GE \n"
+                    "movl	_%s(%%rip), %%edx \n"
+                    "movl	_%s(%%rip), %%eax \n"
+                    "cmpl	%%eax, %%edx\n",
+              tac->op1->text, tac->op2->text);
+      if (tac->next->type == TAC_JZ)
+      {
+        fprintf(fout, "\n ##TAC JZ \n"
+                      "jl	_%s \n",
+                tac->next->res->text);
+      }
+      break;
+
+    case TAC_LE:
+      fprintf(fout, "\n ##TAC TAC_LE \n"
+                    "movl	_%s(%%rip), %%edx \n"
+                    "movl	_%s(%%rip), %%eax \n"
+                    "cmpl	%%eax, %%edx\n",
+              tac->op1->text, tac->op2->text);
+      if (tac->next->type == TAC_JZ)
+      {
+        fprintf(fout, "\n ##TAC JZ \n"
+                      "jg	_%s \n",
+                tac->next->res->text);
+      }
+      break;
+    case TAC_EQ:
+      fprintf(fout, "\n ##TAC TAC_LE \n"
+                    "movl	_%s(%%rip), %%edx \n"
+                    "movl	_%s(%%rip), %%eax \n"
+                    "cmpl	%%eax, %%edx\n",
+              tac->op1->text, tac->op2->text);
+      if (tac->next->type == TAC_JZ)
+      {
+        fprintf(fout, "\n ##TAC JZ \n"
+                      "jne	_%s \n",
+                tac->next->res->text);
+      }
+      break;
+
+    case TAC_LABEL:
+      fprintf(fout, "\n ##TAC LABEL \n"
+                    "_%s:\n",
+              tac->res->text);
+      break;
+    case TAC_JMP:
+      fprintf(fout, "\n ##TAC JMP \n"
+                    "jmp _%s\n",
+              tac->res->text);
+      break;
+    case TAC_INPUT:
+      fprintf(fout, "\n ##TAC INPUT \n"
+                    "movl	$_%s, %%esi\n"
+                    "movl	$insertInt, %%edi\n"
+                    "movl	$0, %%eax\n"
+                    "call	__isoc99_scanf\n",
+              tac->res->text);
+      break;
     }
   }
   fclose(fout);

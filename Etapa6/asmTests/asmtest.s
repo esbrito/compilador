@@ -12,6 +12,15 @@ a:
 	.size	b, 4
 b:
 	.long	3
+	.globl	c
+	.align 4
+	.type	c, @object
+	.size	c, 4
+c:
+	.long	1
+	.section	.rodata
+.LC0:
+	.string	"%d"
 	.text
 	.globl	main
 	.type	main, @function
@@ -23,9 +32,10 @@ main:
 	.cfi_offset 6, -16
 	movq	%rsp, %rbp
 	.cfi_def_cfa_register 6
-	movl	b(%rip), %eax
-	addl	$6, %eax
-	movl	%eax, a(%rip)
+	movl	$c, %esi
+	movl	$.LC0, %edi
+	movl	$0, %eax
+	call	__isoc99_scanf
 	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8
