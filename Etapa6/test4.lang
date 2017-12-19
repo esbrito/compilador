@@ -1,0 +1,13 @@
+x: short = 0;
+i: short = 0;
+
+
+(long) main(){
+  print "printa_X_vezes", "insira_X";
+  read > x;
+  while (i < x) {
+    print "compiladores_eh_legal";
+    i = i + 1;
+  };
+  return (0);
+}

@@ -1,0 +1,22 @@
+max: short = 0;
+min: short = 0;
+valor: short = 0;
+
+(long) main(){
+  print "verifica_faixa", "insira_valor_max";
+  read > max;
+  print "insira_valor_min";
+  read > min;
+  print "insira_valor_para_verificar_se_dentro_da_faixa";
+  read > valor;
+  if(valor > max) then {
+    print "ultrapassou"
+  } else {
+  if(valor < min) then {
+    print "abaixo"
+  }else{
+        print "correto"
+  }
+  };
+  return (0);
+}

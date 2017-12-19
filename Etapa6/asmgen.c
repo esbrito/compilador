@@ -117,11 +117,19 @@ void asm_generator(char *filename, TAC *code)
               "movq	%%rsp, %%rbp \n"
               ".cfi_def_cfa_register 6 \n",
               tac->res->text);
+
+      int numberOfArgs = tac->res->tree ? tac->res->tree->functionArgs : 0;
+      if (numberOfArgs >= 1)
+        fprintf(fout, "movl	%%edx, _%s(%%rip) \n", tac->next->res->text);
+      if (numberOfArgs >= 2)
+        fprintf(fout, "movl	%%esi, _%s(%%rip) \n", tac->next->next->res->text);
+      if (numberOfArgs >= 3)
+        fprintf(fout, "movl	%%edi, _%s(%%rip) \n", tac->next->next->next->res->text);
+
       break;
     case TAC_ENDFUN:
       fprintf(fout,
               "\n##TAC ENDFUN \n"
-              "	movl	$0, %%eax \n"
               "popq	%%rbp \n"
               ".cfi_def_cfa 7, 8 \n"
               "ret \n"
@@ -237,6 +245,37 @@ void asm_generator(char *filename, TAC *code)
                     "movl	$insertInt, %%edi\n"
                     "movl	$0, %%eax\n"
                     "call	__isoc99_scanf\n",
+              tac->res->text);
+      break;
+    case TAC_ARG:
+      if(tac->prev && tac->prev->type == TAC_SYMBOL && tac->prev->prev && tac->prev->prev->type == TAC_ARG) break;
+      fprintf(fout, "\n ##TAC ARG \n"
+                    "movl	_%s(%%rip), %%edx\n",
+              tac->res->text);
+      if (tac->next && tac->next->next && tac->next->next->type == TAC_ARG)
+      {
+        fprintf(fout, "\n ##TAC ARG \n"
+                      "movl	_%s(%%rip), %%ecx\n"
+                      "movl	%%ecx, %%esi\n",
+                tac->next->next->res->text);
+      }
+      if (tac->next && tac->next->next && tac->next->next->next &&  tac->next->next->next->next && tac->next->next->next->next->type == TAC_ARG)
+      {
+        fprintf(fout, "\n ##TAC ARG \n"
+                      "movl	_%s(%%rip), %%eax\n"
+                      "movl	%%eax, %%edi\n",
+                tac->next->next->next->next->res->text);
+      }
+      break;
+    case TAC_FUNCALL:
+      fprintf(fout, "\n ##TAC_FUNCALL \n"
+                    "call %s\n"
+                    "movl	%%eax, _%s(%%rip)\n",
+              tac->op1->text, tac->res->text);
+      break;
+    case TAC_RETURN:
+    fprintf(fout, "\n ##TAC_RETURN \n"
+                    "movl _%s(%%rip), 	%%eax\n",
               tac->res->text);
       break;
     }

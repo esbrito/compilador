@@ -22,6 +22,16 @@ var: short = 0;
   read > var;
   print "valor_inserido";
   print (var);
+  var = soma_dobro(var, hue);
+  print "resposta";
+  print (var);
   return (0);
 
   }
+
+(long) soma_dobro(a: short, b: short) {
+  print "elevando_ao_quadrado";
+  print "op1",(a);
+  print"op2",(b);
+  return ((a * 2) + (2 * b));
+}

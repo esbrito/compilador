@@ -1,0 +1,15 @@
+op1: short = 0;
+op2: short = 0;
+
+(long) main(){
+  print "este_eh_um_somador", "insira_op1";
+  read > op1;
+  print "insira_op2";
+  read > op2;
+  print "resultado", soma(op1,op2);
+  return (0);
+  }
+
+  (short) soma (a: short, b: short){
+    return (a + b);
+  }

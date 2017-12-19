@@ -47,11 +47,12 @@ void tac_print_single(TAC *tac)
 {
   if (!tac)
     return;
-  if (tac->type == TAC_SYMBOL)
-    return;
+ // if (tac->type == TAC_SYMBOL)
+  //  return;
   fprintf(stderr, "TAC(");
   switch (tac->type)
   {
+    case TAC_SYMBOL: fprintf(stderr, "TAC_SYMBOL" ); break;
     case TAC_ADD: fprintf(stderr, "TAC_ADD" ); break;
     case TAC_MUL: fprintf(stderr, "TAC_MUL" ); break;
     case TAC_SUB: fprintf(stderr, "TAC_SUB" ); break;
@@ -133,7 +134,7 @@ TAC *tac_generator(TREE *node)
     case TREE_OR : return tac_join(tac_join(code[0], code[1]), tac_create(TAC_OR,  make_temp() ,code[0]?code[0]->res:0,code[1]?code[1]->res:0)); break;
     case TREE_FUNCTION : return tac_join(tac_join((tac_create(TAC_BEGINFUN, node->symbol , 0 , 0)),tac_join(tac_join(tac_join(code[0], code[1]),code[2]),code[3])), tac_create(TAC_ENDFUN, node->symbol , 0 , 0)); break;
     case TREE_WHILE: return make_while(code[0],code[1]); break;
-    case TREE_PARAMS: if (node->son[0]->type!=TREE_PARAM) { return tac_join(tac_join(code[0], tac_create(TAC_ARG, node->son[0]->symbol?node->son[0]->symbol:code[0]->res,0,0)), code[1]);} break; 
+    case TREE_PARAMS:  return tac_join(tac_join(code[0], tac_create(TAC_ARG, node->son[0]->symbol?node->son[0]->symbol:code[0]->res,0,0)), code[1]);break; 
     case TREE_FUNCTION_CALL: return tac_join(code[0], tac_create(TAC_FUNCALL, make_temp(), node->symbol, 0)); break;
     case TREE_RETURN: return tac_join(code[0], tac_create(TAC_RETURN, code[0]?code[0]->res:0,0, 0));
                      
